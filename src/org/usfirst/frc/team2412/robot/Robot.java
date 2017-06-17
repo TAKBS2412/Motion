@@ -34,6 +34,11 @@ public class Robot extends IterativeRobot {
 		talon.setFeedbackDevice(CANTalon.FeedbackDevice.QuadEncoder);
 		talon.reverseSensor(true); //Reverse the sensor
 	}
+	
+	@Override
+	public void teleopInit() {
+		talon.setPosition(0); //Zero out the encoder in the beginning
+	}
 
 	/**
 	 * This autonomous (along with the chooser code above) shows how to select
