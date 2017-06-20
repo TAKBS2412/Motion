@@ -20,6 +20,14 @@ public class Robot extends IterativeRobot {
 	SendableChooser<String> chooser = new SendableChooser<>();
 	CANTalon talon;
 	CANTalon talon2;
+	
+	final double encodertocmconv = 0.0239534386;
+	
+	//Gets the encoder's position value in cm.
+	public double getPositionCm(CANTalon talon) {
+		return talon.getPosition() * encodertocmconv;
+	}
+	
 	/**
 	 * This function is run when the robot is first started up and should be
 	 * used for any initialization code.
@@ -83,8 +91,11 @@ public class Robot extends IterativeRobot {
 	public void teleopPeriodic() {
 //		talon.set(0.1);
 //		talon2.set(0.1);
-		System.out.println("Position (cm): " + talon.getPosition() * 0.0239534386);
-		System.out.println("Speed: " + talon.getSpeed() * 0.0239534386);
+		if(getPositionCm(talon) > 10) {
+			System.out.println("STOP");
+		} else {
+			System.out.println("GO");
+		}
 	}
 
 	/**
