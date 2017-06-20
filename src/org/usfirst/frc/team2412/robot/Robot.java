@@ -14,10 +14,13 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * directory.
  */
 public class Robot extends IterativeRobot {
-	final String defaultAuto = "Default";
-	final String customAuto = "My Auto";
-	String autoSelected;
+	/* Autonomous selecting stuff*/
+	final String leftPeg = "Left Peg";
+	final String centerPeg = "Center Peg";
+	final String rightPeg = "Right Peg";
+	String pegSelected;
 	SendableChooser<String> chooser = new SendableChooser<>();
+	
 	CANTalon talon;
 	CANTalon talon2;
 	
@@ -34,9 +37,10 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void robotInit() {
-		chooser.addDefault("Default Auto", defaultAuto);
-		chooser.addObject("My Auto", customAuto);
-		SmartDashboard.putData("Auto choices", chooser);
+		chooser.addDefault("Center Peg", centerPeg);
+		chooser.addObject("Left Peg", leftPeg);
+		chooser.addObject("Right Peg", rightPeg);
+		SmartDashboard.putData("Peg choices", chooser);
 		talon = new CANTalon(2);
 		talon2 = new CANTalon(3);
 		talon.setFeedbackDevice(CANTalon.FeedbackDevice.QuadEncoder);
@@ -62,10 +66,10 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void autonomousInit() {
-		autoSelected = chooser.getSelected();
+		pegSelected = chooser.getSelected();
 		// autoSelected = SmartDashboard.getString("Auto Selector",
 		// defaultAuto);
-		System.out.println("Auto selected: " + autoSelected);
+		System.out.println("Auto selected: " + pegSelected);
 	}
 
 	/**
@@ -73,11 +77,11 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void autonomousPeriodic() {
-		switch (autoSelected) {
-		case customAuto:
+		switch (pegSelected) {
+		case centerPeg:
 			// Put custom auto code here
 			break;
-		case defaultAuto:
+		case leftPeg:
 		default:
 			// Put default auto code here
 			break;
