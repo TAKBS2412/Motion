@@ -14,12 +14,17 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * directory.
  */
 public class Robot extends IterativeRobot {
-	/* Autonomous selecting stuff*/
+	/* Autonomous peg selecting stuff*/
 	final String leftPeg = "Left Peg";
 	final String centerPeg = "Center Peg";
 	final String rightPeg = "Right Peg";
 	String pegSelected;
-	SendableChooser<String> chooser = new SendableChooser<>();
+	SendableChooser<String> pegChooser = new SendableChooser<>();
+	
+	final String visionOnlyAuto = "Vision only";
+	final String encodersAuto = "Encoders";
+	String autoSelected;
+	SendableChooser<String> autoChooser = new SendableChooser<>();
 	
 	CANTalon talon;
 	CANTalon talon2;
@@ -37,10 +42,15 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void robotInit() {
-		chooser.addDefault("Center Peg", centerPeg);
-		chooser.addObject("Left Peg", leftPeg);
-		chooser.addObject("Right Peg", rightPeg);
-		SmartDashboard.putData("Peg choices", chooser);
+		pegChooser.addDefault("Center Peg", centerPeg);
+		pegChooser.addObject("Left Peg", leftPeg);
+		pegChooser.addObject("Right Peg", rightPeg);
+		SmartDashboard.putData("Peg choices", pegChooser);
+		
+		autoChooser.addDefault("Encoders!", encodersAuto);
+		autoChooser.addObject("Vision Tracking", visionOnlyAuto);
+		SmartDashboard.putData("Auto choices", autoChooser);
+		
 		talon = new CANTalon(2);
 		talon2 = new CANTalon(3);
 		talon.setFeedbackDevice(CANTalon.FeedbackDevice.QuadEncoder);
@@ -66,10 +76,12 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void autonomousInit() {
-		pegSelected = chooser.getSelected();
+		pegSelected = pegChooser.getSelected();
+		autoSelected = autoChooser.getSelected();
 		// autoSelected = SmartDashboard.getString("Auto Selector",
 		// defaultAuto);
-		System.out.println("Auto selected: " + pegSelected);
+		System.out.println("Peg selected: " + pegSelected);
+		System.out.println("Auto selected: " + autoSelected);
 	}
 
 	/**
