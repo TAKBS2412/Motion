@@ -38,6 +38,7 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void teleopInit() {
 		talon.setPosition(0); //Zero out the encoder in the beginning
+		talon.configEncoderCodesPerRev(1);
 	}
 
 	/**
@@ -80,10 +81,10 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void teleopPeriodic() {
-		talon.set(0.1);
-		talon2.set(0.1);
-		System.out.println("Position: " + talon.getPosition());
-		System.out.println("Speed: " + talon.getSpeed());
+//		talon.set(0.1);
+//		talon2.set(0.1);
+		System.out.println("Position (cm): " + talon.getPosition() * 0.0239534386);
+		System.out.println("Speed: " + talon.getSpeed() * 0.0239534386);
 	}
 
 	/**
