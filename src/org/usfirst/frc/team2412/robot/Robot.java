@@ -18,8 +18,11 @@ public class Robot extends IterativeRobot {
 	final String customAuto = "My Auto";
 	String autoSelected;
 	SendableChooser<String> chooser = new SendableChooser<>();
-	CANTalon talon;
-	CANTalon talon2;
+	
+	CANTalon leftTalon;
+	CANTalon leftTalon2;
+	CANTalon rightTalon;
+	CANTalon rightTalon2;
 	
 	final double encodertocmconv = 0.0239534386;
 	
@@ -37,19 +40,31 @@ public class Robot extends IterativeRobot {
 		chooser.addDefault("Default Auto", defaultAuto);
 		chooser.addObject("My Auto", customAuto);
 		SmartDashboard.putData("Auto choices", chooser);
-		talon = new CANTalon(2);
-		talon2 = new CANTalon(3);
-		talon.setFeedbackDevice(CANTalon.FeedbackDevice.QuadEncoder);
-		talon.reverseSensor(true); //Reverse the sensor
-		//Make talon2 follow talon
-		talon2.changeControlMode(CANTalon.TalonControlMode.Follower);
-		talon2.set(talon.getDeviceID());
+		
+		leftTalon = new CANTalon(7);
+		leftTalon2 = new CANTalon(6);
+		
+		rightTalon = new CANTalon(2);
+		rightTalon2 = new CANTalon(3);
+		
+		rightTalon.setFeedbackDevice(CANTalon.FeedbackDevice.QuadEncoder);
+		rightTalon.reverseSensor(true); //Reverse the sensor
+	
+		//Make talon2 follow rightTalon
+		rightTalon2.changeControlMode(CANTalon.TalonControlMode.Follower);
+		rightTalon2.set(rightTalon.getDeviceID());
+		
+		//Make left talons follow rightTalon
+		leftTalon.changeControlMode(CANTalon.TalonControlMode.Follower);
+		leftTalon.set(rightTalon.getDeviceID());
+		leftTalon2.changeControlMode(CANTalon.TalonControlMode.Follower);
+		leftTalon2.set(rightTalon.getDeviceID());
 	}
 	
 	@Override
 	public void teleopInit() {
-		talon.setPosition(0); //Zero out the encoder in the beginning
-		talon.configEncoderCodesPerRev(1);
+		rightTalon.setPosition(0); //Zero out the encoder in the beginning
+		rightTalon.configEncoderCodesPerRev(1);
 	}
 
 	/**
@@ -92,9 +107,9 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void teleopPeriodic() {
-		talon.set(0.1); //Hopefully this will set talon2 as well.
+		rightTalon.set(0.1); //Hopefully this will set talon2 as well.
 //		talon2.set(0.1);
-		if(getPositionCm(talon) > 10) {
+		if(getPositionCm(rightTalon) > 10) {
 			System.out.println("STOP");
 		} else {
 			System.out.println("GO");
