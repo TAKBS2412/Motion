@@ -42,7 +42,7 @@ public class Robot extends IterativeRobot {
 		talon.setFeedbackDevice(CANTalon.FeedbackDevice.QuadEncoder);
 		talon.reverseSensor(true); //Reverse the sensor
 		//Make talon2 follow talon
-		talon2.changeControlMode(CANTalon.ControlMode.Follower);
+		talon2.changeControlMode(CANTalon.TalonControlMode.Follower);
 		talon2.set(talon.getDeviceID());
 	}
 	
