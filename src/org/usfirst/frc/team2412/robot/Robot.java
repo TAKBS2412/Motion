@@ -55,6 +55,9 @@ public class Robot extends IterativeRobot {
 		talon2 = new CANTalon(3);
 		talon.setFeedbackDevice(CANTalon.FeedbackDevice.QuadEncoder);
 		talon.reverseSensor(true); //Reverse the sensor
+		//Make talon2 follow talon
+		talon2.changeControlMode(CANTalon.ControlMode.Follower);
+		talon2.set(talon.getDeviceID());
 	}
 	
 	@Override
@@ -105,7 +108,7 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void teleopPeriodic() {
-//		talon.set(0.1);
+		talon.set(0.1); //Hopefully this will set talon2 as well.
 //		talon2.set(0.1);
 		if(getPositionCm(talon) > 10) {
 			System.out.println("STOP");
