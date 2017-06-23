@@ -142,7 +142,6 @@ public class MotionProfiler {
 	public void control() {
 		/* Get the motion profile status every loop */
 		_talon.getMotionProfileStatus(_status);
-
 		/*
 		 * track time, this is rudimentary but that's okay, we just want to make
 		 * sure things never get stuck.
@@ -161,7 +160,7 @@ public class MotionProfiler {
 				--_loopTimeout;
 			}
 		}
-
+		
 		/* first check if we are in MP mode */
 		if (_talon.getControlMode() != TalonControlMode.MotionProfile) {
 			/*
@@ -277,7 +276,7 @@ public class MotionProfiler {
 			point.isLastPoint = false;
 			if ((i + 1) == totalCnt)
 				point.isLastPoint = true; /* set this to true on the last point  */
-
+			
 			_talon.pushMotionProfileTrajectory(point);
 		}
 	}

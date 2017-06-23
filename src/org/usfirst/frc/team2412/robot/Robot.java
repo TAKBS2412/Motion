@@ -1,6 +1,7 @@
 package org.usfirst.frc.team2412.robot;
 
 import com.ctre.CANTalon;
+import com.ctre.CANTalon.TalonControlMode;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -26,6 +27,10 @@ public class Robot extends IterativeRobot {
 	
 	final double encodertocmconv = 0.0239534386;
 	
+	MotionProfiler profiler; //The MotionProfile logic.
+	
+	boolean motionProfileStarted;
+	
 	//Gets the encoder's position value in cm.
 	public double getPositionCm(CANTalon talon) {
 		return talon.getPosition() * encodertocmconv;
@@ -44,12 +49,14 @@ public class Robot extends IterativeRobot {
 		leftTalon = new CANTalon(7);
 		leftTalon2 = new CANTalon(6);
 		
-		rightTalon = new CANTalon(2);
-		rightTalon2 = new CANTalon(3);
+		rightTalon = new CANTalon(3);
+		rightTalon2 = new CANTalon(2);
+		
+		profiler = new MotionProfiler(rightTalon);
 		
 		rightTalon.setFeedbackDevice(CANTalon.FeedbackDevice.QuadEncoder);
+		rightTalon.changeControlMode(TalonControlMode.MotionProfile); //Make Talon go into motion profiling mode.
 		rightTalon.reverseSensor(true); //Reverse the sensor
-	
 		//Make talon2 follow rightTalon
 		rightTalon2.changeControlMode(CANTalon.TalonControlMode.Follower);
 		rightTalon2.set(rightTalon.getDeviceID());
@@ -59,12 +66,18 @@ public class Robot extends IterativeRobot {
 		leftTalon.set(rightTalon.getDeviceID());
 		leftTalon2.changeControlMode(CANTalon.TalonControlMode.Follower);
 		leftTalon2.set(rightTalon.getDeviceID());
+		motionProfileStarted = false;
+		
 	}
 	
 	@Override
 	public void teleopInit() {
 		rightTalon.setPosition(0); //Zero out the encoder in the beginning
-		rightTalon.configEncoderCodesPerRev(1);
+		rightTalon.configEncoderCodesPerRev(2048);
+		rightTalon.setF(0.2600);
+		rightTalon.setP(0);
+		rightTalon.setI(0);
+		rightTalon.setD(0);
 	}
 
 	/**
@@ -107,13 +120,18 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void teleopPeriodic() {
-		rightTalon.set(0.1); //Hopefully this will set talon2 as well.
-//		talon2.set(0.1);
-		if(getPositionCm(rightTalon) > 10) {
-			System.out.println("STOP");
-		} else {
-			System.out.println("GO");
+		if(!motionProfileStarted) {
+			motionProfileStarted = true;
+			rightTalon.changeControlMode(TalonControlMode.MotionProfile); //Make Talon go into motion profiling mode.
+			profiler.startMotionProfile();
+			System.out.println("Hello");
+//			System.out.println(rightTalon.getControlMode());
 		}
+		profiler.control();
+		rightTalon.changeControlMode(TalonControlMode.MotionProfile); //Make Talon go into motion profiling mode.
+		CANTalon.SetValueMotionProfile setOutput = profiler.getSetValue();
+//		System.out.println(setOutput.value);
+		rightTalon.set(setOutput.value);
 	}
 
 	/**
@@ -128,5 +146,12 @@ public class Robot extends IterativeRobot {
 //	public void disabledInit() {
 //		
 //	}
+	
+	public void disabledPeriodic() {
+		//Stop motion profiling when the robot is disabled.
+		rightTalon.changeControlMode(TalonControlMode.PercentVbus);
+		rightTalon.set(0);
+		profiler.reset();
+	}
 }
 
