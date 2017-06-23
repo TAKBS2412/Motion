@@ -152,6 +152,7 @@ public class Robot extends IterativeRobot {
 		rightTalon.changeControlMode(TalonControlMode.PercentVbus);
 		rightTalon.set(0);
 		profiler.reset();
+		motionProfileStarted = false;
 	}
 }
 
