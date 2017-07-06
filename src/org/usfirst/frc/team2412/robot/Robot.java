@@ -56,7 +56,7 @@ public class Robot extends IterativeRobot {
 		
 		rightTalon.setFeedbackDevice(CANTalon.FeedbackDevice.QuadEncoder);
 		rightTalon.changeControlMode(TalonControlMode.MotionProfile); //Make Talon go into motion profiling mode.
-		rightTalon.reverseSensor(true); //Reverse the sensor
+		rightTalon.reverseOutput(true); //Reverse the motor output.
 		//Make talon2 follow rightTalon
 		rightTalon2.changeControlMode(CANTalon.TalonControlMode.Follower);
 		rightTalon2.set(rightTalon.getDeviceID());
@@ -125,12 +125,11 @@ public class Robot extends IterativeRobot {
 			rightTalon.changeControlMode(TalonControlMode.MotionProfile); //Make Talon go into motion profiling mode.
 			profiler.startMotionProfile();
 			System.out.println("Hello");
-//			System.out.println(rightTalon.getControlMode());
 		}
 		profiler.control();
 		rightTalon.changeControlMode(TalonControlMode.MotionProfile); //Make Talon go into motion profiling mode.
 		CANTalon.SetValueMotionProfile setOutput = profiler.getSetValue();
-//		System.out.println(setOutput.value);
+		System.out.println(setOutput.value);
 		rightTalon.set(setOutput.value);
 	}
 
