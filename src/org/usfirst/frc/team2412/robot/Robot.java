@@ -4,6 +4,7 @@ import com.ctre.CANTalon;
 import com.ctre.CANTalon.TalonControlMode;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
+import edu.wpi.first.wpilibj.RobotDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -25,11 +26,15 @@ public class Robot extends IterativeRobot {
 	CANTalon rightTalon;
 	CANTalon rightTalon2;
 	
+	RobotDrive rd;
+	
 	final double encodertocmconv = 0.0239534386;
 	
 	MotionProfiler profiler; //The MotionProfile logic.
 	
 	boolean motionProfileStarted;
+	boolean motionProfileEnded;
+	boolean turnStarted;
 	
 	//Gets the encoder's position value in cm.
 	public double getPositionCm(CANTalon talon) {
@@ -49,25 +54,10 @@ public class Robot extends IterativeRobot {
 		leftTalon = new CANTalon(7);
 		leftTalon2 = new CANTalon(6);
 		
-		rightTalon = new CANTalon(3);
-		rightTalon2 = new CANTalon(2);
+		rightTalon = new CANTalon(2);
+		rightTalon2 = new CANTalon(3);
 		
 		profiler = new MotionProfiler(rightTalon);
-		
-		rightTalon.setFeedbackDevice(CANTalon.FeedbackDevice.QuadEncoder);
-		rightTalon.changeControlMode(TalonControlMode.MotionProfile); //Make Talon go into motion profiling mode.
-		rightTalon.reverseOutput(true); //Reverse the motor output.
-		//Make talon2 follow rightTalon
-		rightTalon2.changeControlMode(CANTalon.TalonControlMode.Follower);
-		rightTalon2.set(rightTalon.getDeviceID());
-		
-		//Make left talons follow rightTalon
-		leftTalon.changeControlMode(CANTalon.TalonControlMode.Follower);
-		leftTalon.set(rightTalon.getDeviceID());
-		leftTalon2.changeControlMode(CANTalon.TalonControlMode.Follower);
-		leftTalon2.set(rightTalon.getDeviceID());
-		motionProfileStarted = false;
-		
 	}
 	
 	@Override
@@ -120,17 +110,40 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void teleopPeriodic() {
-		if(!motionProfileStarted) {
+		if(!motionProfileStarted && !turnStarted) {
 			motionProfileStarted = true;
+			setupMotionProfiling();
 			rightTalon.changeControlMode(TalonControlMode.MotionProfile); //Make Talon go into motion profiling mode.
 			profiler.startMotionProfile();
 			System.out.println("Hello");
 		}
-		profiler.control();
-		rightTalon.changeControlMode(TalonControlMode.MotionProfile); //Make Talon go into motion profiling mode.
-		CANTalon.SetValueMotionProfile setOutput = profiler.getSetValue();
-		System.out.println(setOutput.value);
-		rightTalon.set(setOutput.value);
+		if(!motionProfileEnded) {
+			profiler.control();
+			rightTalon.changeControlMode(TalonControlMode.MotionProfile); //Make Talon go into motion profiling mode.
+			CANTalon.SetValueMotionProfile setOutput = profiler.getSetValue();
+			rightTalon.set(setOutput.value);
+			motionProfileEnded = setOutput.value == 2;
+		}
+		if(motionProfileEnded && !turnStarted) {
+			System.out.println("Motion Profile ended, preparing to turn.");
+			rightTalon.reverseOutput(false);
+			rightTalon.changeControlMode(TalonControlMode.PercentVbus);
+			rightTalon.set(0);
+			profiler.reset();
+			rightTalon2.changeControlMode(TalonControlMode.PercentVbus);
+			leftTalon.changeControlMode(TalonControlMode.PercentVbus);
+			leftTalon2.changeControlMode(TalonControlMode.PercentVbus);
+			rd = new RobotDrive(leftTalon, leftTalon2, rightTalon, rightTalon2);
+			turnStarted = true;
+		}
+		if(turnStarted) {
+			System.out.println("Turning...");
+//			rightTalon.set(0.3);
+//			rightTalon2.set(0.3);
+//			leftTalon.set(-0.3);
+//			leftTalon2.set(-0.3);
+			rd.arcadeDrive(0.3d, 0.0d);
+		}
 	}
 
 	/**
@@ -147,11 +160,22 @@ public class Robot extends IterativeRobot {
 //	}
 	
 	public void disabledPeriodic() {
-		//Stop motion profiling when the robot is disabled.
-		rightTalon.changeControlMode(TalonControlMode.PercentVbus);
-		rightTalon.set(0);
-		profiler.reset();
-		motionProfileStarted = false;
+	}
+	
+	private void setupMotionProfiling() {
+		rightTalon.reverseOutput(true); //Reverse the motor output.
+		rightTalon.setFeedbackDevice(CANTalon.FeedbackDevice.QuadEncoder);
+		rightTalon.changeControlMode(TalonControlMode.MotionProfile); //Make Talon go into motion profiling mode.
+		//Make talon2 follow rightTalon
+		rightTalon2.changeControlMode(CANTalon.TalonControlMode.Follower);
+		rightTalon2.set(rightTalon.getDeviceID());
+		
+		//Make left talons follow rightTalon
+		leftTalon.changeControlMode(CANTalon.TalonControlMode.Follower);
+		leftTalon.set(rightTalon.getDeviceID());
+		leftTalon2.changeControlMode(CANTalon.TalonControlMode.Follower);
+		leftTalon2.set(rightTalon.getDeviceID());
+		motionProfileStarted = motionProfileEnded = turnStarted = false;
 	}
 }
 
