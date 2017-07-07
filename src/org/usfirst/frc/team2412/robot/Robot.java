@@ -110,9 +110,9 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void teleopPeriodic() {
+		System.out.println(motionProfileStarted + ", " + motionProfileEnded + ", " + turnStarted);
 		if(!motionProfileStarted && !turnStarted) {
 			motionProfileStarted = true;
-			setupMotionProfiling();
 			rightTalon.changeControlMode(TalonControlMode.MotionProfile); //Make Talon go into motion profiling mode.
 			profiler.startMotionProfile();
 			System.out.println("Hello");
@@ -122,7 +122,10 @@ public class Robot extends IterativeRobot {
 			rightTalon.changeControlMode(TalonControlMode.MotionProfile); //Make Talon go into motion profiling mode.
 			CANTalon.SetValueMotionProfile setOutput = profiler.getSetValue();
 			rightTalon.set(setOutput.value);
-			motionProfileEnded = setOutput.value == 2;
+			if(profiler.activeIsLast()) {
+				System.out.println("isLast: true");
+			}
+			motionProfileEnded = profiler.activeIsLast();
 		}
 		if(motionProfileEnded && !turnStarted) {
 			System.out.println("Motion Profile ended, preparing to turn.");
@@ -137,7 +140,7 @@ public class Robot extends IterativeRobot {
 			turnStarted = true;
 		}
 		if(turnStarted) {
-			System.out.println("Turning...");
+//			System.out.println("Turning...");
 //			rightTalon.set(0.3);
 //			rightTalon2.set(0.3);
 //			leftTalon.set(-0.3);
@@ -158,8 +161,9 @@ public class Robot extends IterativeRobot {
 //	public void disabledInit() {
 //		
 //	}
-	
-	public void disabledPeriodic() {
+	@Override
+	public void disabledInit() {
+		setupMotionProfiling();
 	}
 	
 	private void setupMotionProfiling() {

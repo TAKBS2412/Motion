@@ -298,4 +298,11 @@ public class MotionProfiler {
 	CANTalon.SetValueMotionProfile getSetValue() {
 		return _setValue;
 	}
+	
+	/**
+	 * @return Whether the active point is the last one in the motion profile or not.
+	 */
+	boolean activeIsLast() {
+		return _status.activePoint.isLastPoint;
+	}
 }
