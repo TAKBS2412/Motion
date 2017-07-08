@@ -6,10 +6,12 @@ package org.usfirst.frc.team2412.robot;
 
 public class AutonomousCommand {
 	private boolean isRunning;
+	private String commandName;
 	
 	/** TODO Possibly change this constructor? */
-	public AutonomousCommand() {
+	public AutonomousCommand(String _commandName) {
 		isRunning = false;
+		this.commandName = _commandName;
 	}
 
 	/**
@@ -36,16 +38,16 @@ public class AutonomousCommand {
 	/**
 	 * Called if this command should be running.
 	 */
-	protected boolean shouldBeRunning() {
-		return false;
+	protected boolean shouldBeRunning(String selectedCommandName) {
+		return commandName.equals(selectedCommandName);
 	}
 
 	/**
 	 * Called by other classes that use AutonomousCommand.
 	 * This method determines when the other methods should be called.
 	 */
-	public void run() {
-		if(shouldBeRunning()) {
+	public void run(String selectedCommandName) {
+		if(shouldBeRunning(selectedCommandName)) {
 			if(isRunning) {
 				runPeriodic();
 			} else {
