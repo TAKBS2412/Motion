@@ -5,8 +5,6 @@ import com.ctre.CANTalon.TalonControlMode;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.RobotDrive;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -16,18 +14,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * directory.
  */
 public class Robot extends IterativeRobot {
-	/* Autonomous peg selecting stuff*/
-	final String leftPeg = "Left Peg";
-	final String centerPeg = "Center Peg";
-	final String rightPeg = "Right Peg";
-	String pegSelected;
-	SendableChooser<String> pegChooser = new SendableChooser<>();
-	
-	final String visionOnlyAuto = "Vision only";
-	final String encodersAuto = "Encoders";
-	String autoSelected;
-
-	SendableChooser<String> autoChooser = new SendableChooser<>();
 
 	CANTalon leftTalon;
 	CANTalon leftTalon2;
@@ -44,6 +30,8 @@ public class Robot extends IterativeRobot {
 	boolean motionProfileEnded;
 	boolean turnStarted;
 	
+	AutonomousCommandManager acm;
+	
 	//Gets the encoder's position value in cm.
 	public double getPositionCm(CANTalon talon) {
 		return talon.getPosition() * encodertocmconv;
@@ -55,14 +43,7 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void robotInit() {
-		pegChooser.addDefault("Center Peg", centerPeg);
-		pegChooser.addObject("Left Peg", leftPeg);
-		pegChooser.addObject("Right Peg", rightPeg);
-		SmartDashboard.putData("Peg choices", pegChooser);
-		
-		autoChooser.addDefault("Encoders!", encodersAuto);
-		autoChooser.addObject("Vision Tracking", visionOnlyAuto);
-		SmartDashboard.putData("Auto choices", autoChooser);
+		acm = new AutonomousCommandManager();
 		
 		leftTalon = new CANTalon(7);
 		leftTalon2 = new CANTalon(6);
@@ -96,12 +77,7 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void autonomousInit() {
-		pegSelected = pegChooser.getSelected();
-		autoSelected = autoChooser.getSelected();
-		// autoSelected = SmartDashboard.getString("Auto Selector",
-		// defaultAuto);
-		System.out.println("Peg selected: " + pegSelected);
-		System.out.println("Auto selected: " + autoSelected);
+		acm.autonomousInit();
 	}
 
 	/**
@@ -109,15 +85,7 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void autonomousPeriodic() {
-		switch (pegSelected) {
-		case centerPeg:
-			// Put custom auto code here
-			break;
-		case leftPeg:
-		default:
-			// Put default auto code here
-			break;
-		}
+		acm.autonomousPeriodic();
 	}
 
 	/**
