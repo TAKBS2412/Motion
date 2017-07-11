@@ -20,7 +20,7 @@ public class Robot extends IterativeRobot {
 	CANTalon rightTalon;
 	CANTalon rightTalon2;
 	
-	RobotDrive rd;
+	public static RobotDrive rd;
 	
 	final double encodertocmconv = 0.0239534386;
 	
@@ -52,6 +52,8 @@ public class Robot extends IterativeRobot {
 		rightTalon2 = new CANTalon(3);
 		
 		profiler = new MotionProfiler(rightTalon);
+		
+		rd = new RobotDrive(leftTalon, leftTalon2, rightTalon, rightTalon2);
 	}
 	
 	@Override
@@ -119,7 +121,6 @@ public class Robot extends IterativeRobot {
 			rightTalon2.changeControlMode(TalonControlMode.PercentVbus);
 			leftTalon.changeControlMode(TalonControlMode.PercentVbus);
 			leftTalon2.changeControlMode(TalonControlMode.PercentVbus);
-			rd = new RobotDrive(leftTalon, leftTalon2, rightTalon, rightTalon2);
 			turnStarted = true;
 		}
 		if(turnStarted) {
@@ -128,7 +129,7 @@ public class Robot extends IterativeRobot {
 //			rightTalon2.set(0.3);
 //			leftTalon.set(-0.3);
 //			leftTalon2.set(-0.3);
-			rd.arcadeDrive(0.3d, 0.0d);
+//			rd.arcadeDrive(0.3d, 0.0d);
 		}
 	}
 

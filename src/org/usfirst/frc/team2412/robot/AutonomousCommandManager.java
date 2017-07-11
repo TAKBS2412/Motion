@@ -17,6 +17,7 @@ public class AutonomousCommandManager {
 	
 	final String visionOnlyAuto = "Vision only";
 	final String encodersAuto = "Encoders";
+	final String timeBasedAuto = "Time Based";
 	String autoSelected;
 
 	SendableChooser<String> autoChooser = new SendableChooser<>();
@@ -24,6 +25,8 @@ public class AutonomousCommandManager {
 	public static String selectedCommand;
 	
 	public static int currentStage = 0;
+	
+	DriveForTimeCommand dftc;
 	
 	/**
 	 * This constructor is called by the Robot class during robotInit().
@@ -38,7 +41,9 @@ public class AutonomousCommandManager {
 		
 		autoChooser.addDefault("Encoders!", encodersAuto);
 		autoChooser.addObject("Vision Tracking", visionOnlyAuto);
+		autoChooser.addObject("Time Based", timeBasedAuto);
 		SmartDashboard.putData("Auto choices", autoChooser);
+		
 	}
 	
 	/**
@@ -53,20 +58,15 @@ public class AutonomousCommandManager {
 		System.out.println("Auto selected: " + autoSelected);
 		
 		currentStage = 1;
+		
+		dftc = new DriveForTimeCommand(1, Robot.rd, 0.5d, 0.0d, 1E9);
 	}
 	
 	/**
 	 * This method is called by the Robot class in autonomousPeriodic().
 	 */
 	public void autonomousPeriodic() {
-		switch (pegSelected) {
-		case centerPeg:
-			// Put custom auto code here
-			break;
-		case leftPeg:
-		default:
-			// Put default auto code here
-			break;
-		}
+		System.out.println(currentStage);
+		dftc.execute();
 	}
 }

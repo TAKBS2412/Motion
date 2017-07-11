@@ -7,10 +7,10 @@ public class DriveForTimeCommand extends AutonomousCommand {
 	private RobotDrive rd;
 	private double move;
 	private double turn;
-	private long duration;
+	private double duration;
 	
 	private long startuptime;
-	public DriveForTimeCommand(int _commandStage, RobotDrive _rd, double _move, double _turn, long _duration) {
+	public DriveForTimeCommand(int _commandStage, RobotDrive _rd, double _move, double _turn, double _duration) {
 		super(_commandStage);
 		this.rd = _rd;
 		this.move = _move;
@@ -39,5 +39,12 @@ public class DriveForTimeCommand extends AutonomousCommand {
 	 */
 	protected void runPeriodic() {
 		rd.arcadeDrive(move, turn, false);
+	}
+	
+	/**
+	 * Called when the command ends.
+	 */
+	protected void end() {
+		rd.arcadeDrive(0.0d, 0.0d, false); //Stop driving
 	}
 }
