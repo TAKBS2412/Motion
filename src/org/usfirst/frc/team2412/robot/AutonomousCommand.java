@@ -8,12 +8,12 @@ import edu.wpi.first.wpilibj.command.Command;
 
 public class AutonomousCommand extends Command {
 	private boolean isRunning;
-	private String commandName;
+	private int commandStage;
 	
 	/** TODO Possibly change this constructor? */
-	public AutonomousCommand(String _commandName) {
+	public AutonomousCommand(int _commandStage) {
 		isRunning = false;
-		this.commandName = _commandName;
+		this.commandStage = _commandStage;
 	}
 
 	/**
@@ -26,8 +26,8 @@ public class AutonomousCommand extends Command {
 	/**
 	 * Called if this command should be running.
 	 */
-	protected boolean shouldBeRunning(String selectedCommandName) {
-		return commandName.equals(selectedCommandName);
+	protected boolean shouldBeRunning() {
+		return commandStage == AutonomousCommandManager.currentStage;
 	}
 
 	/**
@@ -42,7 +42,7 @@ public class AutonomousCommand extends Command {
 	 * This method determines when the other methods should be called.
 	 */
 	protected void execute() {
-		if(shouldBeRunning(AutonomousCommandManager.selectedCommand)) {
+		if(shouldBeRunning()) {
 			if(isRunning) {
 				if(isFinished()) {
 					//Command's about to stop.
