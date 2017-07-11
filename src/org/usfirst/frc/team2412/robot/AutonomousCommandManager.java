@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  */
 public class AutonomousCommandManager {
 	/* Autonomous peg selecting stuff*/
+	final String driveForward = "Drive Forward";
 	final String leftPeg = "Left Peg";
 	final String centerPeg = "Center Peg";
 	final String rightPeg = "Right Peg";
@@ -22,12 +23,15 @@ public class AutonomousCommandManager {
 	
 	public static String selectedCommand;
 	
+	public static int currentStage = 0;
+	
 	/**
 	 * This constructor is called by the Robot class during robotInit().
 	 */
 	public AutonomousCommandManager() {
 		//Setup SmartDashboard.
-		pegChooser.addDefault("Center Peg", centerPeg);
+		pegChooser.addObject("Drive Forward to Baseline (if selected, ignore stages 2 and 3)", driveForward);
+		pegChooser.addDefault("Center Peg (if selected, ignore stage 2)", centerPeg);
 		pegChooser.addObject("Left Peg", leftPeg);
 		pegChooser.addObject("Right Peg", rightPeg);
 		SmartDashboard.putData("Peg choices", pegChooser);
@@ -47,6 +51,8 @@ public class AutonomousCommandManager {
 		// defaultAuto);
 		System.out.println("Peg selected: " + pegSelected);
 		System.out.println("Auto selected: " + autoSelected);
+		
+		currentStage = 1;
 	}
 	
 	/**

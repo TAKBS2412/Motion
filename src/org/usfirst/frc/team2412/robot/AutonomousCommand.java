@@ -43,24 +43,28 @@ public class AutonomousCommand extends Command {
 	 */
 	protected void execute() {
 		if(shouldBeRunning(AutonomousCommandManager.selectedCommand)) {
-			if(!isFinished()) {
-				runPeriodic();
+			if(isRunning) {
+				if(isFinished()) {
+					//Command's about to stop.
+					AutonomousCommandManager.currentStage++; //Move on to the next stage
+					end();
+				} else {
+					//Command's currently running.
+					runPeriodic();
+				}
 			} else {
+				//Command's about to start.
 				initialize();
 			}
-		} else {
-			if(!isFinished()) {
-				end();
-			}
-			//Don't do anything if the command has been stopped and doesn't need to be run.
 		}
 	}
 
 	/**
 	 * Determines if the command is finished.
+	 * This method should be overriden by any subclasses.
 	 */
 	protected boolean isFinished() {
-		return isRunning;
+		return false;
 	}
 
 	/**
