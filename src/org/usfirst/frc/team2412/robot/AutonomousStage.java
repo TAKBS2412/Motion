@@ -16,7 +16,7 @@ public class AutonomousStage {
 	 * Creates an empty AutonomousStage instance.
 	 * @param _stage The stage number that this instance represents.
 	 */
-	public AutonomousStage(int _stage) {
+	public AutonomousStage() {
 		this.chooser = new SendableChooser<>();
 		this.hm = new HashMap<String, Command>();
 	}
