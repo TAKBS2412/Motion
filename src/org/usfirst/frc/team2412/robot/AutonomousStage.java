@@ -1,9 +1,11 @@
 package org.usfirst.frc.team2412.robot;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * A class that represents a stage in Autonomous.
@@ -48,4 +50,10 @@ public class AutonomousStage {
 		return hm.get(chooser.getSelected());
 	}
 
+	/**
+	 * Sends the SendableChooser to the SmartDashboard.
+	 */
+	public void sendCommands() {
+		SmartDashboard.putData("Auto Choices", chooser);
+	}
 }
