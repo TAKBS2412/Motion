@@ -43,7 +43,7 @@ public class DriveForTimeCommand extends Command2 {
 	/**
 	 * Called when the command ends.
 	 */
-	protected void end() {
+	public void end() {
 		rd.arcadeDrive(0.0d, 0.0d, false); //Stop driving
 	}
 }
