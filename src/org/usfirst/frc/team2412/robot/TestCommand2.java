@@ -1,10 +1,10 @@
 package org.usfirst.frc.team2412.robot;
 
-public class TestCommand extends Command2 {
+public class TestCommand2 extends Command2 {
 	private double duration;
 	
 	private long startuptime;
-	public TestCommand(double _duration) {
+	public TestCommand2(double _duration) {
 		this.duration = _duration;
 	}
 	
@@ -28,7 +28,7 @@ public class TestCommand extends Command2 {
 	 * Called periodically when the command is running.
 	 */
 	protected void execute() {
-		System.out.println("Testing in progress...");
+		System.out.println("(2) Testing in progress...");
 	}
 	
 	/**

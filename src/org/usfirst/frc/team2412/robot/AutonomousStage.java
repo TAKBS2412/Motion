@@ -50,8 +50,9 @@ public class AutonomousStage {
 
 	/**
 	 * Sends the SendableChooser to the SmartDashboard.
+	 * @param key The key to send.
 	 */
-	public void sendCommands() {
-		SmartDashboard.putData("Auto Choices", chooser);
+	public void sendCommands(String key) {
+		SmartDashboard.putData(key, chooser);
 	}
 }

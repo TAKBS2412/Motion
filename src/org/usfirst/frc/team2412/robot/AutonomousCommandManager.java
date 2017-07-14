@@ -31,8 +31,11 @@ public class AutonomousCommandManager {
 	
 	DriveForTimeCommand dftc;
 	TestCommand testcmd;
+	TestCommand1 testcmd1;
+	TestCommand2 testcmd2;
 	
 	AutonomousStage as;
+	AutonomousStage as1;
 	
 	AutonomousCommand ac;
 	ArrayList<AutonomousStage> stages;
@@ -54,10 +57,18 @@ public class AutonomousCommandManager {
 //		SmartDashboard.putData("Auto choices", autoChooser);
 		dftc = new DriveForTimeCommand(1, Robot.rd, 0.5d, 0.0d, 5E9);
 		testcmd = new TestCommand(5E9);
+		testcmd1 = new TestCommand1(4E9);
+		testcmd2 = new TestCommand2(3E9);
+		
 		as = new AutonomousStage();
 		as.addCommand("Time Based", dftc);
 		as.addDefaultCommand("TEST", testcmd);
-		as.sendCommands();
+		as.sendCommands("Stage 1");
+		
+		as1 = new AutonomousStage();
+		as1.addDefaultCommand("Test1", testcmd1);
+		as1.addCommand("Test2", testcmd2);
+		as1.sendCommands("Stage 2");
 	}
 	
 	/**
@@ -66,6 +77,7 @@ public class AutonomousCommandManager {
 	public void autonomousInit() {
 		stages = new ArrayList<AutonomousStage>();
 		stages.add(as);
+		stages.add(as1);
 		ac = new AutonomousCommand(stages);
 		ac.start();
 		
