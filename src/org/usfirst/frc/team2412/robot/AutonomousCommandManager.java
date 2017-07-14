@@ -1,5 +1,8 @@
 package org.usfirst.frc.team2412.robot;
 
+import java.util.ArrayList;
+
+import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -20,13 +23,18 @@ public class AutonomousCommandManager {
 	final String timeBasedAuto = "Time Based";
 	String autoSelected;
 
-	SendableChooser<String> autoChooser = new SendableChooser<>();
+//	SendableChooser<String> autoChooser = new SendableChooser<>();
 	
 	public static String selectedCommand;
 	
 	public static int currentStage = 0;
 	
 	DriveForTimeCommand dftc;
+	
+	AutonomousStage as;
+	
+	AutonomousCommand ac;
+	ArrayList<AutonomousStage> stages;
 	
 	/**
 	 * This constructor is called by the Robot class during robotInit().
@@ -39,19 +47,27 @@ public class AutonomousCommandManager {
 		pegChooser.addObject("Right Peg", rightPeg);
 		SmartDashboard.putData("Peg choices", pegChooser);
 		
-		autoChooser.addDefault("Encoders!", encodersAuto);
-		autoChooser.addObject("Vision Tracking", visionOnlyAuto);
-		autoChooser.addObject("Time Based", timeBasedAuto);
-		SmartDashboard.putData("Auto choices", autoChooser);
-		
+//		autoChooser.addDefault("Encoders!", encodersAuto);
+//		autoChooser.addObject("Vision Tracking", visionOnlyAuto);
+//		autoChooser.addObject("Time Based", timeBasedAuto);
+//		SmartDashboard.putData("Auto choices", autoChooser);
+		dftc = new DriveForTimeCommand(1, Robot.rd, 0.5d, 0.0d, 5E9);
+		as = new AutonomousStage();
+		as.addCommand("Time Based", dftc);
+		as.sendCommands();
 	}
 	
 	/**
 	 * This method is called by the Robot class in autonomousInit().
 	 */
 	public void autonomousInit() {
+		stages = new ArrayList<AutonomousStage>();
+		stages.add(as);
+		ac = new AutonomousCommand(stages);
+		ac.start();
+		
 		pegSelected = pegChooser.getSelected();
-		autoSelected = autoChooser.getSelected();
+//		autoSelected = autoChooser.getSelected();
 		// autoSelected = SmartDashboard.getString("Auto Selector",
 		// defaultAuto);
 		System.out.println("Peg selected: " + pegSelected);
@@ -59,14 +75,15 @@ public class AutonomousCommandManager {
 		
 		currentStage = 1;
 		
-		dftc = new DriveForTimeCommand(1, Robot.rd, 0.5d, 0.0d, 1E9);
+//		dftc = new DriveForTimeCommand(1, Robot.rd, 0.5d, 0.0d, 1E9);
 	}
 	
 	/**
 	 * This method is called by the Robot class in autonomousPeriodic().
 	 */
 	public void autonomousPeriodic() {
-		System.out.println(currentStage);
-		dftc.execute();
+		Scheduler.getInstance().run();
+//		System.out.println(currentStage);
+//		dftc.execute();
 	}
 }
