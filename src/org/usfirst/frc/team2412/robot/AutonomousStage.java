@@ -1,7 +1,6 @@
 package org.usfirst.frc.team2412.robot;
 
 import java.util.HashMap;
-import java.util.Map;
 
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
