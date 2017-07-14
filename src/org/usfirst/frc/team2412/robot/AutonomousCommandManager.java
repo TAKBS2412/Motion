@@ -30,6 +30,7 @@ public class AutonomousCommandManager {
 	public static int currentStage = 0;
 	
 	DriveForTimeCommand dftc;
+	TestCommand testcmd;
 	
 	AutonomousStage as;
 	
@@ -52,8 +53,10 @@ public class AutonomousCommandManager {
 //		autoChooser.addObject("Time Based", timeBasedAuto);
 //		SmartDashboard.putData("Auto choices", autoChooser);
 		dftc = new DriveForTimeCommand(1, Robot.rd, 0.5d, 0.0d, 5E9);
+		testcmd = new TestCommand(5E9);
 		as = new AutonomousStage();
 		as.addCommand("Time Based", dftc);
+		as.addDefaultCommand("TEST", testcmd);
 		as.sendCommands();
 	}
 	
