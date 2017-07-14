@@ -2,7 +2,6 @@ package org.usfirst.frc.team2412.robot;
 
 import java.util.ArrayList;
 
-import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 
 /*
@@ -17,14 +16,8 @@ public class AutonomousCommand extends CommandGroup {
 	 */
 	public AutonomousCommand(ArrayList<AutonomousStage> stages) {
 		for(AutonomousStage stage : stages) {
-			Command selectedCommand = stage.getSelected();
-			if(selectedCommand == null) {
-				System.err.println("No stage was selected!");
-				continue;
-			}
-			addSequential(selectedCommand);
+			addSequential(new FudgeCommand(stage));
 		}
 	}
-	
 	
 }
