@@ -10,6 +10,15 @@ public class Command2 extends Command {
 	}
 	
 	@Override
+	protected void initialize() {
+		super.initialize();
+	}
+	
+	@Override
+	public void execute() {
+		super.execute();
+	}
+	@Override
 	public void end() {
 		super.end();
 	}

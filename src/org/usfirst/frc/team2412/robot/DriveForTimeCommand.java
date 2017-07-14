@@ -35,7 +35,7 @@ public class DriveForTimeCommand extends Command2 {
 	/**
 	 * Called periodically when the command is running.
 	 */
-	protected void execute() {
+	public void execute() {
 		System.out.println(rd);
 		rd.arcadeDrive(move, turn, false);
 	}

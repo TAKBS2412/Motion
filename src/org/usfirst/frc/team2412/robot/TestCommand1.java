@@ -27,7 +27,7 @@ public class TestCommand1 extends Command2 {
 	/**
 	 * Called periodically when the command is running.
 	 */
-	protected void execute() {
+	public void execute() {
 		System.out.println("(1) Testing in progress...");
 	}
 	

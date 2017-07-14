@@ -20,6 +20,7 @@ public class TestCommand extends Command2 {
 	 * Determines if the command is finished.
 	 */
 	protected boolean isFinished() {
+		System.out.println(startuptime);
 		long deltaTime = System.nanoTime() - startuptime; 
 		return deltaTime < 0 || deltaTime > duration; 
 	}
@@ -27,7 +28,7 @@ public class TestCommand extends Command2 {
 	/**
 	 * Called periodically when the command is running.
 	 */
-	protected void execute() {
+	public void execute() {
 		System.out.println("Testing in progress...");
 	}
 	
