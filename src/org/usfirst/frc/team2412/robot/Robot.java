@@ -43,17 +43,17 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void robotInit() {
-		acm = new AutonomousCommandManager();
-		
 		leftTalon = new CANTalon(7);
 		leftTalon2 = new CANTalon(6);
 		
 		rightTalon = new CANTalon(2);
 		rightTalon2 = new CANTalon(3);
 		
-		profiler = new MotionProfiler(rightTalon);
-		
 		rd = new RobotDrive(leftTalon, leftTalon2, rightTalon, rightTalon2);
+		
+		acm = new AutonomousCommandManager();
+		
+		profiler = new MotionProfiler(rightTalon);
 	}
 	
 	@Override
