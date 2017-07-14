@@ -2,7 +2,6 @@ package org.usfirst.frc.team2412.robot;
 
 import java.util.HashMap;
 
-import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -11,7 +10,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  */
 public class AutonomousStage {
 	private SendableChooser<String> chooser;
-	private HashMap<String, Command> hm;
+	private HashMap<String, Command2> hm;
 
 	/**
 	 * Creates an empty AutonomousStage instance.
@@ -19,7 +18,7 @@ public class AutonomousStage {
 	 */
 	public AutonomousStage() {
 		this.chooser = new SendableChooser<>();
-		this.hm = new HashMap<String, Command>();
+		this.hm = new HashMap<String, Command2>();
 	}
 
 	/**
@@ -27,7 +26,7 @@ public class AutonomousStage {
 	 * @param commandName The name of the autonomous command to add.
 	 * @param command The command object to be added.
 	 */
-	public void addCommand(String commandName, Command command) {
+	public void addCommand(String commandName, Command2 command) {
 		chooser.addObject(commandName, commandName);
 		hm.put(commandName, command);
 	}
@@ -37,7 +36,7 @@ public class AutonomousStage {
 	 * @param commandName The name of the autonomous command to add.
 	 * @param command The command object to be added.
 	 */
-	public void addDefaultCommand(String commandName, Command command) {
+	public void addDefaultCommand(String commandName, Command2 command) {
 		chooser.addDefault(commandName, commandName);
 		hm.put(commandName, command);
 	}
@@ -45,7 +44,7 @@ public class AutonomousStage {
 	/**
 	 * Gets the currently selected autonomous command.
 	 */
-	public Command getSelected() {
+	public Command2 getSelected() {
 		return hm.get(chooser.getSelected());
 	}
 
