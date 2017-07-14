@@ -1,8 +1,9 @@
 package org.usfirst.frc.team2412.robot;
 
 import edu.wpi.first.wpilibj.RobotDrive;
+import edu.wpi.first.wpilibj.command.Command;
 
-public class DriveForTimeCommand extends AutonomousCommand {
+public class DriveForTimeCommand extends Command {
 
 	private RobotDrive rd;
 	private double move;
@@ -22,7 +23,6 @@ public class DriveForTimeCommand extends AutonomousCommand {
 	 * Called when the command first starts.
 	 */
 	public void initialize() {
-		super.initialize();
 		this.startuptime = System.nanoTime();
 	}
 	
