@@ -34,7 +34,7 @@ public class TestCommand1 extends Command2 {
 	/**
 	 * Called when the command ends.
 	 */
-	protected void end() {
+	public void end() {
 		System.out.println("Testing complete!");
 	}
 }

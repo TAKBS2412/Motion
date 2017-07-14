@@ -8,5 +8,10 @@ public class Command2 extends Command {
 	protected boolean isFinished() {
 		return true; //We're always finished by default.
 	}
+	
+	@Override
+	public void end() {
+		super.end();
+	}
 
 }
