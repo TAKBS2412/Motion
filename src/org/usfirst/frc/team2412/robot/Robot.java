@@ -1,10 +1,15 @@
 package org.usfirst.frc.team2412.robot;
 
+import java.util.ArrayList;
+
 import com.ctre.CANTalon;
 import com.ctre.CANTalon.TalonControlMode;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.RobotDrive;
+import edu.wpi.first.wpilibj.command.Scheduler;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -30,7 +35,36 @@ public class Robot extends IterativeRobot {
 	boolean motionProfileEnded;
 	boolean turnStarted;
 	
-	AutonomousCommandManager acm;
+	/**Autonomous selecting variables*/
+	
+	//Variables for selecting autonomous mode.
+	final String driveForward = "Drive Forward";
+	final String leftPeg = "Left Peg";
+	final String centerPeg = "Center Peg";
+	final String rightPeg = "Right Peg";
+	String pegSelected;
+	SendableChooser<String> pegChooser = new SendableChooser<>();
+	
+	final String visionOnlyAuto = "Vision only";
+	final String encodersAuto = "Encoders";
+	final String timeBasedAuto = "Time Based";
+	String autoSelected;
+	
+	//Variables for selecting autonomous stages
+	int currentStage = 0;
+	
+	DriveForTimeCommand dftc;
+	TestCommand testcmd;
+	TestCommand1 testcmd1;
+	TestCommand2 testcmd2;
+	
+	AutonomousStage as;
+	AutonomousStage as1;
+	
+	AutonomousCommand ac;
+	ArrayList<AutonomousStage> stages;
+	
+	Command2 selectedCommand;
 	
 	//Gets the encoder's position value in cm.
 	public double getPositionCm(CANTalon talon) {
@@ -51,7 +85,28 @@ public class Robot extends IterativeRobot {
 		
 		rd = new RobotDrive(leftTalon, leftTalon2, rightTalon, rightTalon2);
 		
-		acm = new AutonomousCommandManager();
+		//Setup SmartDashboard.
+		pegChooser.addObject("Drive Forward to Baseline (if selected, ignore stages 2 and 3)", driveForward);
+		pegChooser.addDefault("Center Peg (if selected, ignore stage 2)", centerPeg);
+		pegChooser.addObject("Left Peg", leftPeg);
+		pegChooser.addObject("Right Peg", rightPeg);
+		SmartDashboard.putData("Peg choices", pegChooser);
+		
+		//Setup autonomous stages.
+		dftc = new DriveForTimeCommand(1, Robot.rd, 0.5d, 0.0d, 5E9);
+		testcmd = new TestCommand(5E9);
+		testcmd1 = new TestCommand1(4E9);
+		testcmd2 = new TestCommand2(3E9);
+		
+		as = new AutonomousStage();
+		as.addCommand("Time Based", dftc);
+		as.addDefaultCommand("TEST", testcmd);
+		as.sendCommands("Stage 1");
+		
+		as1 = new AutonomousStage();
+		as1.addDefaultCommand("Test1", testcmd1);
+		as1.addCommand("Test2", testcmd2);
+		as1.sendCommands("Stage 2");
 		
 		profiler = new MotionProfiler(rightTalon);
 	}
@@ -79,7 +134,15 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void autonomousInit() {
-		acm.autonomousInit();
+		stages = new ArrayList<AutonomousStage>();
+		stages.add(as);
+		stages.add(as1);
+		
+		currentStage = 0;
+		
+		selectedCommand = stages.get(currentStage).getSelected();
+		selectedCommand.initialize();
+		selectedCommand.start();
 	}
 
 	/**
@@ -87,7 +150,22 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void autonomousPeriodic() {
-		acm.autonomousPeriodic();
+		if(currentStage >= stages.size()) return;
+		
+		Scheduler.getInstance().run();
+		selectedCommand.execute();
+		
+		if(selectedCommand.isFinished()) {
+			System.out.println("Finished");
+			//Current command is finished, move on to the next one.
+			currentStage++;
+			selectedCommand.end();
+			if(currentStage < stages.size()) {
+				selectedCommand = stages.get(currentStage).getSelected();
+				selectedCommand.initialize();
+				selectedCommand.start();
+			}
+		}
 	}
 
 	/**
