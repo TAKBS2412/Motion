@@ -61,7 +61,6 @@ public class Robot extends IterativeRobot {
 	AutonomousStage as;
 	AutonomousStage as1;
 	
-	AutonomousCommand ac;
 	ArrayList<AutonomousStage> stages;
 	
 	Command2 selectedCommand;
