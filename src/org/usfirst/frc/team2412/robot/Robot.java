@@ -20,50 +20,50 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  */
 public class Robot extends IterativeRobot {
 
-	CANTalon leftTalon;
-	CANTalon leftTalon2;
-	CANTalon rightTalon;
-	CANTalon rightTalon2;
+	private CANTalon leftTalon;
+	private CANTalon leftTalon2;
+	private CANTalon rightTalon;
+	private CANTalon rightTalon2;
 	
-	public static RobotDrive rd;
+	private RobotDrive rd;
 	
-	final double encodertocmconv = 0.0239534386;
+	private final double encodertocmconv = 0.0239534386;
 	
-	MotionProfiler profiler; //The MotionProfile logic.
+	private MotionProfiler profiler; //The MotionProfile logic.
 	
-	boolean motionProfileStarted;
-	boolean motionProfileEnded;
-	boolean turnStarted;
+	private boolean motionProfileStarted;
+	private boolean motionProfileEnded;
+	private boolean turnStarted;
 	
 	/**Autonomous selecting variables*/
 	
 	//Variables for selecting autonomous mode.
-	final String driveForward = "Drive Forward";
-	final String leftPeg = "Left Peg";
-	final String centerPeg = "Center Peg";
-	final String rightPeg = "Right Peg";
-	String pegSelected;
-	SendableChooser<String> pegChooser = new SendableChooser<>();
-	
-	final String visionOnlyAuto = "Vision only";
-	final String encodersAuto = "Encoders";
-	final String timeBasedAuto = "Time Based";
-	String autoSelected;
+	private final String driveForward = "Drive Forward";
+	private final String leftPeg = "Left Peg";
+	private final String centerPeg = "Center Peg";
+	private final String rightPeg = "Right Peg";
+	private String pegSelected;
+	private SendableChooser<String> pegChooser = new SendableChooser<>();
+
+	private final String visionOnlyAuto = "Vision only";
+	private final String encodersAuto = "Encoders";
+	private final String timeBasedAuto = "Time Based";
+	private String autoSelected;
 	
 	//Variables for selecting autonomous stages
-	int currentStage = 0;
-	
-	DriveForTimeCommand dftc;
-	TestCommand testcmd;
-	TestCommand1 testcmd1;
-	TestCommand2 testcmd2;
-	
-	AutonomousStage as;
-	AutonomousStage as1;
-	
-	ArrayList<AutonomousStage> stages;
-	
-	Command2 selectedCommand;
+	private int currentStage = 0;
+
+	private DriveForTimeCommand dftc;
+	private TestCommand testcmd;
+	private TestCommand1 testcmd1;
+	private TestCommand2 testcmd2;
+
+	private AutonomousStage as;
+	private AutonomousStage as1;
+
+	private ArrayList<AutonomousStage> stages;
+	 
+	private Command2 selectedCommand;
 	
 	//Gets the encoder's position value in cm.
 	public double getPositionCm(CANTalon talon) {
@@ -92,7 +92,7 @@ public class Robot extends IterativeRobot {
 		SmartDashboard.putData("Peg choices", pegChooser);
 		
 		//Setup autonomous stages.
-		dftc = new DriveForTimeCommand(1, Robot.rd, 0.5d, 0.0d, 5E9);
+		dftc = new DriveForTimeCommand(1, rd, 0.5d, 0.0d, 5E9);
 		testcmd = new TestCommand(5E9);
 		testcmd1 = new TestCommand1(4E9);
 		testcmd2 = new TestCommand2(3E9);
