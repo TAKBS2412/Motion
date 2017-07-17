@@ -20,10 +20,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  */
 public class Robot extends IterativeRobot {
 
-	private CANTalon leftTalon;
-	private CANTalon leftTalon2;
-	private CANTalon rightTalon;
-	private CANTalon rightTalon2;
+	private CANTalon[] allTalons = new CANTalon[4];
 	
 	private RobotDrive rd;
 	
@@ -76,13 +73,18 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void robotInit() {
-		leftTalon = new CANTalon(7);
-		leftTalon2 = new CANTalon(6);
+		allTalons[0] = new CANTalon(7);
+		allTalons[1] = new CANTalon(6);
 		
-		rightTalon = new CANTalon(2);
-		rightTalon2 = new CANTalon(3);
+		allTalons[2] = new CANTalon(2);
+		allTalons[3] = new CANTalon(3);
 		
-		rd = new RobotDrive(leftTalon, leftTalon2, rightTalon, rightTalon2);
+		//Make sure all of the Talons are in PercentVbus mode.
+		for(CANTalon talon : allTalons) {
+			talon.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
+		}
+		
+		rd = new RobotDrive(allTalons[0], allTalons[1], allTalons[2], allTalons[3]);
 		
 		//Setup SmartDashboard.
 		pegChooser.addObject("Drive Forward to Baseline (if selected, ignore stages 2 and 3)", driveForward);
@@ -98,8 +100,8 @@ public class Robot extends IterativeRobot {
 		testcmd2 = new TestCommand2(3E9);
 		
 		as = new AutonomousStage();
-		as.addCommand("Time Based", dftc);
-		as.addDefaultCommand("TEST", testcmd);
+		as.addDefaultCommand("Time Based", dftc);
+		as.addCommand("TEST", testcmd);
 		as.sendCommands("Stage 1");
 		
 		as1 = new AutonomousStage();
@@ -107,17 +109,17 @@ public class Robot extends IterativeRobot {
 		as1.addCommand("Test2", testcmd2);
 		as1.sendCommands("Stage 2");
 		
-		profiler = new MotionProfiler(rightTalon);
+//		profiler = new MotionProfiler(allTalons[2]);
 	}
 	
 	@Override
 	public void teleopInit() {
-		rightTalon.setPosition(0); //Zero out the encoder in the beginning
-		rightTalon.configEncoderCodesPerRev(2048);
-		rightTalon.setF(0.2600);
-		rightTalon.setP(0);
-		rightTalon.setI(0);
-		rightTalon.setD(0);
+		allTalons[2].setPosition(0); //Zero out the encoder in the beginning
+		allTalons[2].configEncoderCodesPerRev(2048);
+		allTalons[2].setF(0.2600);
+		allTalons[2].setP(0);
+		allTalons[2].setI(0);
+		allTalons[2].setD(0);
 	}
 
 	/**
@@ -175,15 +177,15 @@ public class Robot extends IterativeRobot {
 		System.out.println(motionProfileStarted + ", " + motionProfileEnded + ", " + turnStarted);
 		if(!motionProfileStarted && !turnStarted) {
 			motionProfileStarted = true;
-			rightTalon.changeControlMode(TalonControlMode.MotionProfile); //Make Talon go into motion profiling mode.
+			allTalons[2].changeControlMode(TalonControlMode.MotionProfile); //Make Talon go into motion profiling mode.
 			profiler.startMotionProfile();
 			System.out.println("Hello");
 		}
 		if(!motionProfileEnded) {
 			profiler.control();
-			rightTalon.changeControlMode(TalonControlMode.MotionProfile); //Make Talon go into motion profiling mode.
+			allTalons[2].changeControlMode(TalonControlMode.MotionProfile); //Make Talon go into motion profiling mode.
 			CANTalon.SetValueMotionProfile setOutput = profiler.getSetValue();
-			rightTalon.set(setOutput.value);
+			allTalons[2].set(setOutput.value);
 			if(profiler.activeIsLast()) {
 				System.out.println("isLast: true");
 			}
@@ -191,21 +193,21 @@ public class Robot extends IterativeRobot {
 		}
 		if(motionProfileEnded && !turnStarted) {
 			System.out.println("Motion Profile ended, preparing to turn.");
-			rightTalon.reverseOutput(false);
-			rightTalon.changeControlMode(TalonControlMode.PercentVbus);
-			rightTalon.set(0);
+			allTalons[2].reverseOutput(false);
+			allTalons[2].changeControlMode(TalonControlMode.PercentVbus);
+			allTalons[2].set(0);
 			profiler.reset();
-			rightTalon2.changeControlMode(TalonControlMode.PercentVbus);
-			leftTalon.changeControlMode(TalonControlMode.PercentVbus);
-			leftTalon2.changeControlMode(TalonControlMode.PercentVbus);
+			allTalons[3].changeControlMode(TalonControlMode.PercentVbus);
+			allTalons[0].changeControlMode(TalonControlMode.PercentVbus);
+			allTalons[1].changeControlMode(TalonControlMode.PercentVbus);
 			turnStarted = true;
 		}
 		if(turnStarted) {
 //			System.out.println("Turning...");
-//			rightTalon.set(0.3);
-//			rightTalon2.set(0.3);
-//			leftTalon.set(-0.3);
-//			leftTalon2.set(-0.3);
+//			allTalons[2].set(0.3);
+//			allTalons[3].set(0.3);
+//			allTalons[0].set(-0.3);
+//			allTalons[1].set(-0.3);
 //			rd.arcadeDrive(0.3d, 0.0d);
 		}
 	}
@@ -224,22 +226,22 @@ public class Robot extends IterativeRobot {
 //	}
 	@Override
 	public void disabledInit() {
-		setupMotionProfiling();
+//		setupMotionProfiling();
 	}
 	
 	private void setupMotionProfiling() {
-		rightTalon.reverseOutput(true); //Reverse the motor output.
-		rightTalon.setFeedbackDevice(CANTalon.FeedbackDevice.QuadEncoder);
-		rightTalon.changeControlMode(TalonControlMode.MotionProfile); //Make Talon go into motion profiling mode.
-		//Make talon2 follow rightTalon
-		rightTalon2.changeControlMode(CANTalon.TalonControlMode.Follower);
-		rightTalon2.set(rightTalon.getDeviceID());
+		allTalons[2].reverseOutput(true); //Reverse the motor output.
+		allTalons[2].setFeedbackDevice(CANTalon.FeedbackDevice.QuadEncoder);
+		allTalons[2].changeControlMode(TalonControlMode.MotionProfile); //Make Talon go into motion profiling mode.
+		//Make talon2 follow allTalons[2]
+		allTalons[3].changeControlMode(CANTalon.TalonControlMode.Follower);
+		allTalons[3].set(allTalons[2].getDeviceID());
 		
-		//Make left talons follow rightTalon
-		leftTalon.changeControlMode(CANTalon.TalonControlMode.Follower);
-		leftTalon.set(rightTalon.getDeviceID());
-		leftTalon2.changeControlMode(CANTalon.TalonControlMode.Follower);
-		leftTalon2.set(rightTalon.getDeviceID());
+		//Make left talons follow allTalons[2]
+		allTalons[0].changeControlMode(CANTalon.TalonControlMode.Follower);
+		allTalons[0].set(allTalons[2].getDeviceID());
+		allTalons[1].changeControlMode(CANTalon.TalonControlMode.Follower);
+		allTalons[1].set(allTalons[2].getDeviceID());
 		motionProfileStarted = motionProfileEnded = turnStarted = false;
 	}
 }
