@@ -8,6 +8,7 @@ import com.ctre.CANTalon.TalonControlMode;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.RobotDrive;
 import edu.wpi.first.wpilibj.command.Scheduler;
+import edu.wpi.first.wpilibj.networktables.NetworkTable;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -62,6 +63,8 @@ public class Robot extends IterativeRobot {
 	 
 	private Command2 selectedCommand;
 	
+	public static NetworkTable pydashboardTable;
+	
 	//Gets the encoder's position value in cm.
 	public double getPositionCm(CANTalon talon) {
 		return talon.getPosition() * encodertocmconv;
@@ -73,6 +76,8 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void robotInit() {
+		pydashboardTable = NetworkTable.getTable("PyDashboard");
+		
 		allTalons[0] = new CANTalon(7);
 		allTalons[1] = new CANTalon(6);
 		

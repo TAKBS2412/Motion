@@ -2,22 +2,18 @@ package org.usfirst.frc.team2412.robot;
 
 import java.util.HashMap;
 
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
 /**
  * A class that represents a stage in Autonomous.
  */
 public class AutonomousStage {
-	private SendableChooser<String> chooser;
 	private HashMap<String, Command2> hm;
-
+	private String key;
+	
 	/**
 	 * Creates an empty AutonomousStage instance.
 	 * @param _stage The stage number that this instance represents.
 	 */
 	public AutonomousStage() {
-		this.chooser = new SendableChooser<>();
 		this.hm = new HashMap<String, Command2>();
 	}
 
@@ -27,7 +23,6 @@ public class AutonomousStage {
 	 * @param command The command object to be added.
 	 */
 	public void addCommand(String commandName, Command2 command) {
-		chooser.addObject(commandName, commandName);
 		hm.put(commandName, command);
 	}
 	
@@ -37,7 +32,6 @@ public class AutonomousStage {
 	 * @param command The command object to be added.
 	 */
 	public void addDefaultCommand(String commandName, Command2 command) {
-		chooser.addDefault(commandName, commandName);
 		hm.put(commandName, command);
 	}
 
@@ -45,7 +39,7 @@ public class AutonomousStage {
 	 * Gets the currently selected autonomous command.
 	 */
 	public Command2 getSelected() {
-		return hm.get(chooser.getSelected());
+		return hm.get(Robot.pydashboardTable.getString(key, ""));
 	}
 
 	/**
@@ -53,6 +47,6 @@ public class AutonomousStage {
 	 * @param key The key to send.
 	 */
 	public void sendCommands(String key) {
-		SmartDashboard.putData(key, chooser);
+		this.key = key;
 	}
 }
