@@ -65,6 +65,9 @@ public class Robot extends IterativeRobot {
 	
 	public static NetworkTable pydashboardTable;
 	public static String step1;
+	
+	public static NetworkTable visionTable;
+	
 	//Gets the encoder's position value in cm.
 	public double getPositionCm(CANTalon talon) {
 		return talon.getPosition() * encodertocmconv;
@@ -77,6 +80,7 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void robotInit() {
 		pydashboardTable = NetworkTable.getTable("PyDashboard");
+		visionTable = NetworkTable.getTable("datatable");
 		
 		allTalons[0] = new CANTalon(7);
 		allTalons[1] = new CANTalon(6);
