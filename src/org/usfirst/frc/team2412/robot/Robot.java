@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import com.ctre.CANTalon;
 import com.ctre.CANTalon.TalonControlMode;
 
+import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.RobotDrive;
 import edu.wpi.first.wpilibj.command.Scheduler;
@@ -36,13 +37,22 @@ public class Robot extends IterativeRobot {
 	//Variables for selecting autonomous stages
 	private int currentStage = 0;
 
+	//Step 2 Commands.
+	private MotionProfileCommand mpc;
+	private EncoderCommand ec;
 	private DriveForTimeCommand dftc;
-	private TestCommand testcmd;
-	private TestCommand1 testcmd1;
-	private TestCommand2 testcmd2;
 
-	private AutonomousStage as;
-	private AutonomousStage as1;
+	//Step 3 Commands.
+	private GyroCommand gc;
+	private VisionCommand vc;
+
+	//Step 4 Commands.
+	private VisionCommand vc2;
+	private EncoderCommand ec2;
+	
+	private AutonomousStage as2;
+	private AutonomousStage as3;
+	private AutonomousStage as4;
 
 	private ArrayList<AutonomousStage> stages;
 	 
@@ -80,21 +90,35 @@ public class Robot extends IterativeRobot {
 		
 		rd = new RobotDrive(allTalons[0], allTalons[1], allTalons[2], allTalons[3]);
 		
-		//Setup autonomous stages.
+		//Setup Step2 Commands.
+		mpc = new MotionProfileCommand(allTalons[2], allTalons);
+		ec = new EncoderCommand(allTalons[2], rd, 0.5d, 10, true);
 		dftc = new DriveForTimeCommand(1, rd, 0.5d, 0.0d, 5E9);
-		testcmd = new TestCommand(5E9);
-		testcmd1 = new TestCommand1(4E9);
-		testcmd2 = new TestCommand2(3E9);
 		
-		as = new AutonomousStage();
-		as.addDefaultCommand("Time Based", dftc);
-		as.addCommand("TEST", testcmd);
-		as.sendCommands("Stage 1");
+		//Setup Step3 Commands.
+		gc = new GyroCommand(new ADXRS450_Gyro(), rd, 0.3d, 30);
+		vc = new VisionCommand(rd);
+
+		//Setup Step4 Commands.
+		vc2 = new VisionCommand(rd);
+		ec2 = new EncoderCommand(allTalons[2], rd, 0.3d, 7, true);
 		
-		as1 = new AutonomousStage();
-		as1.addDefaultCommand("Test1", testcmd1);
-		as1.addCommand("Test2", testcmd2);
-		as1.sendCommands("Stage 2");
+		//Setup autonomous stages
+		as2 = new AutonomousStage();
+		as2.addDefaultCommand("Motion Profiling", mpc);
+		as2.addCommand("Encoders", ec);
+		as2.addCommand("Time-Based", dftc);
+		as2.sendCommands("Step2");
+		
+		as3 = new AutonomousStage();
+		as3.addDefaultCommand("Gyroscope", gc);
+		as3.addCommand("Vision Processing", vc);
+		as3.sendCommands("Step3");
+
+		as4 = new AutonomousStage();
+		as4.addDefaultCommand("Vision Processing", vc2);
+		as4.addCommand("Encoders", ec2);
+		as4.sendCommands("Step4");
 		
 //		profiler = new MotionProfiler(allTalons[2]);
 	}
@@ -124,8 +148,9 @@ public class Robot extends IterativeRobot {
 	public void autonomousInit() {
 		step1 = pydashboardTable.getString("Step1", "");
 		stages = new ArrayList<AutonomousStage>();
-		stages.add(as);
-		stages.add(as1);
+		stages.add(as2);
+		stages.add(as3);
+		stages.add(as4);
 		
 		currentStage = 0;
 		
