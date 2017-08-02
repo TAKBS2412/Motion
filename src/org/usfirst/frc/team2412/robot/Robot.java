@@ -9,8 +9,6 @@ import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.RobotDrive;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.networktables.NetworkTable;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -34,19 +32,6 @@ public class Robot extends IterativeRobot {
 	private boolean turnStarted;
 	
 	/**Autonomous selecting variables*/
-	
-	//Variables for selecting autonomous mode.
-	private final String driveForward = "Drive Forward";
-	private final String leftPeg = "Left Peg";
-	private final String centerPeg = "Center Peg";
-	private final String rightPeg = "Right Peg";
-	private String pegSelected;
-	private SendableChooser<String> pegChooser = new SendableChooser<>();
-
-	private final String visionOnlyAuto = "Vision only";
-	private final String encodersAuto = "Encoders";
-	private final String timeBasedAuto = "Time Based";
-	private String autoSelected;
 	
 	//Variables for selecting autonomous stages
 	private int currentStage = 0;
@@ -94,13 +79,6 @@ public class Robot extends IterativeRobot {
 		}
 		
 		rd = new RobotDrive(allTalons[0], allTalons[1], allTalons[2], allTalons[3]);
-		
-		//Setup SmartDashboard.
-		pegChooser.addObject("Drive Forward to Baseline (if selected, ignore stages 2 and 3)", driveForward);
-		pegChooser.addDefault("Center Peg (if selected, ignore stage 2)", centerPeg);
-		pegChooser.addObject("Left Peg", leftPeg);
-		pegChooser.addObject("Right Peg", rightPeg);
-		SmartDashboard.putData("Peg choices", pegChooser);
 		
 		//Setup autonomous stages.
 		dftc = new DriveForTimeCommand(1, rd, 0.5d, 0.0d, 5E9);
