@@ -64,7 +64,7 @@ public class Robot extends IterativeRobot {
 	private Command2 selectedCommand;
 	
 	public static NetworkTable pydashboardTable;
-	
+	public static String step1;
 	//Gets the encoder's position value in cm.
 	public double getPositionCm(CANTalon talon) {
 		return talon.getPosition() * encodertocmconv;
@@ -140,6 +140,7 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void autonomousInit() {
+		step1 = pydashboardTable.getString("Step1", "");
 		stages = new ArrayList<AutonomousStage>();
 		stages.add(as);
 		stages.add(as1);
