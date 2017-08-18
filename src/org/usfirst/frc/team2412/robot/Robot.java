@@ -168,7 +168,6 @@ public class Robot extends IterativeRobot {
 	public void autonomousPeriodic() {
 		if(currentStage >= stages.size()) return;
 		
-		Scheduler.getInstance().run();
 		selectedCommand.execute();
 		
 		if(selectedCommand.isFinished()) {
