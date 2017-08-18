@@ -7,7 +7,7 @@ public class MotionProfileCommand extends Command2 {
 
 	private CANTalon master;
 	private CANTalon[] slaves;
-	private MotionProfiler profiler;
+	MotionProfiler profiler;
 	
 	/**
 	 * 
@@ -16,18 +16,22 @@ public class MotionProfileCommand extends Command2 {
 	 */
 	public MotionProfileCommand(CANTalon _master, CANTalon[] _slaves) {
 		this.master = _master;
+		System.out.println("Master: " + master.getControlMode());
 		//Copy CANTalon array.
 		slaves = new CANTalon[_slaves.length];
 		for(int i = 0; i < _slaves.length; i++) {
 			slaves[i] = _slaves[i];
+			System.out.println("Slave #" + i + ": " +  slaves[i].getControlMode());
 		}
+		
+		profiler = new MotionProfiler(master);
 	}
 	
 	/**
 	 * Called when the command first starts.
 	 */
 	public void initialize() {
-		profiler = new MotionProfiler(master);
+		setupMotionProfiling();
 		
 		master.setPosition(0); //Zero out the encoder in the beginning
 		master.configEncoderCodesPerRev(2048);
@@ -36,7 +40,7 @@ public class MotionProfileCommand extends Command2 {
 		master.setI(0);
 		master.setD(0);
 		
-		setupMotionProfiling();
+		System.out.println("init");
 	}
 	
 	/**
@@ -45,13 +49,16 @@ public class MotionProfileCommand extends Command2 {
 	public void start() {
 		super.start();
 		profiler.startMotionProfile();
+		
+		System.out.println("start");
 	}
 	
 	/**
 	 * Determines if the command is finished.
 	 */
 	protected boolean isFinished() {
-		return profiler.activeIsLast();
+		return profiler.getSetValue() == CANTalon.SetValueMotionProfile.Hold;
+//		return profiler.activeIsLast();
 	}
 	
 	//TODO add execute(), look over https://github.com/TAKBS2412/Motion/blob/master/src/org/usfirst/frc/team2412/robot/Robot.java, add anything else that's needed.
@@ -61,7 +68,7 @@ public class MotionProfileCommand extends Command2 {
 	 */
 	public void execute() {
 //		master.set(0.3);
-		profiler.control();
+//		profiler.control();
 		master.changeControlMode(TalonControlMode.MotionProfile); //Make Talon go into motion profiling mode.
 		CANTalon.SetValueMotionProfile setOutput = profiler.getSetValue();
 		master.set(setOutput.value);
@@ -83,6 +90,7 @@ public class MotionProfileCommand extends Command2 {
 	 * Called when the command ends.
 	 */
 	public void end() {
+		System.out.println("End");
 		master.reverseOutput(false);
 		master.changeControlMode(TalonControlMode.PercentVbus);
 		master.set(0);

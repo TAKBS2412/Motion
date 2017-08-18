@@ -91,7 +91,9 @@ public class Robot extends IterativeRobot {
 		rd = new RobotDrive(allTalons[0], allTalons[1], allTalons[2], allTalons[3]);
 		
 		//Setup Step2 Commands.
-		mpc = new MotionProfileCommand(allTalons[2], allTalons);
+		CANTalon slaves[] = {allTalons[0], allTalons[1], allTalons[3]};
+		
+		mpc = new MotionProfileCommand(allTalons[2], slaves);
 		ec = new EncoderCommand(allTalons[2], rd, 0.5d, 10, true);
 		dftc = new DriveForTimeCommand(1, rd, 0.5d, 0.0d, 5E9);
 		
@@ -125,12 +127,12 @@ public class Robot extends IterativeRobot {
 	
 	@Override
 	public void teleopInit() {
-		allTalons[2].setPosition(0); //Zero out the encoder in the beginning
-		allTalons[2].configEncoderCodesPerRev(2048);
-		allTalons[2].setF(0.2600);
-		allTalons[2].setP(0);
-		allTalons[2].setI(0);
-		allTalons[2].setD(0);
+//		allTalons[2].setPosition(0); //Zero out the encoder in the beginning
+//		allTalons[2].configEncoderCodesPerRev(2048);
+//		allTalons[2].setF(0.2600);
+//		allTalons[2].setP(0);
+//		allTalons[2].setI(0);
+//		allTalons[2].setD(0);
 	}
 
 	/**
@@ -180,6 +182,7 @@ public class Robot extends IterativeRobot {
 				selectedCommand.start();
 			}
 		}
+		mpc.profiler.control();
 	}
 
 	/**
@@ -187,42 +190,42 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void teleopPeriodic() {
-		System.out.println(motionProfileStarted + ", " + motionProfileEnded + ", " + turnStarted);
-		if(!motionProfileStarted && !turnStarted) {
-			motionProfileStarted = true;
-			allTalons[2].changeControlMode(TalonControlMode.MotionProfile); //Make Talon go into motion profiling mode.
-			profiler.startMotionProfile();
-			System.out.println("Hello");
-		}
-		if(!motionProfileEnded) {
-			profiler.control();
-			allTalons[2].changeControlMode(TalonControlMode.MotionProfile); //Make Talon go into motion profiling mode.
-			CANTalon.SetValueMotionProfile setOutput = profiler.getSetValue();
-			allTalons[2].set(setOutput.value);
-			if(profiler.activeIsLast()) {
-				System.out.println("isLast: true");
-			}
-			motionProfileEnded = profiler.activeIsLast();
-		}
-		if(motionProfileEnded && !turnStarted) {
-			System.out.println("Motion Profile ended, preparing to turn.");
-			allTalons[2].reverseOutput(false);
-			allTalons[2].changeControlMode(TalonControlMode.PercentVbus);
-			allTalons[2].set(0);
-			profiler.reset();
-			allTalons[3].changeControlMode(TalonControlMode.PercentVbus);
-			allTalons[0].changeControlMode(TalonControlMode.PercentVbus);
-			allTalons[1].changeControlMode(TalonControlMode.PercentVbus);
-			turnStarted = true;
-		}
-		if(turnStarted) {
-//			System.out.println("Turning...");
-//			allTalons[2].set(0.3);
-//			allTalons[3].set(0.3);
-//			allTalons[0].set(-0.3);
-//			allTalons[1].set(-0.3);
-//			rd.arcadeDrive(0.3d, 0.0d);
-		}
+//		System.out.println(motionProfileStarted + ", " + motionProfileEnded + ", " + turnStarted);
+//		if(!motionProfileStarted && !turnStarted) {
+//			motionProfileStarted = true;
+//			allTalons[2].changeControlMode(TalonControlMode.MotionProfile); //Make Talon go into motion profiling mode.
+//			profiler.startMotionProfile();
+//			System.out.println("Hello");
+//		}
+//		if(!motionProfileEnded) {
+//			profiler.control();
+//			allTalons[2].changeControlMode(TalonControlMode.MotionProfile); //Make Talon go into motion profiling mode.
+//			CANTalon.SetValueMotionProfile setOutput = profiler.getSetValue();
+//			allTalons[2].set(setOutput.value);
+//			if(profiler.activeIsLast()) {
+//				System.out.println("isLast: true");
+//			}
+//			motionProfileEnded = profiler.activeIsLast();
+//		}
+//		if(motionProfileEnded && !turnStarted) {
+//			System.out.println("Motion Profile ended, preparing to turn.");
+//			allTalons[2].reverseOutput(false);
+//			allTalons[2].changeControlMode(TalonControlMode.PercentVbus);
+//			allTalons[2].set(0);
+//			profiler.reset();
+//			allTalons[3].changeControlMode(TalonControlMode.PercentVbus);
+//			allTalons[0].changeControlMode(TalonControlMode.PercentVbus);
+//			allTalons[1].changeControlMode(TalonControlMode.PercentVbus);
+//			turnStarted = true;
+//		}
+//		if(turnStarted) {
+////			System.out.println("Turning...");
+////			allTalons[2].set(0.3);
+////			allTalons[3].set(0.3);
+////			allTalons[0].set(-0.3);
+////			allTalons[1].set(-0.3);
+////			rd.arcadeDrive(0.3d, 0.0d);
+//		}
 	}
 
 	/**
