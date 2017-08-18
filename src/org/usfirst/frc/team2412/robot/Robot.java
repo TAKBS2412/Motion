@@ -178,11 +178,11 @@ public class Robot extends IterativeRobot {
 			selectedCommand.end();
 			if(currentStage < stages.size()) {
 				selectedCommand = stages.get(currentStage).getSelected();
+				System.out.println(selectedCommand);
 				selectedCommand.initialize();
 				selectedCommand.start();
 			}
 		}
-		mpc.profiler.control();
 	}
 
 	/**

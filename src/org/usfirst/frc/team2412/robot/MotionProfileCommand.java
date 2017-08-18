@@ -7,7 +7,7 @@ public class MotionProfileCommand extends Command2 {
 
 	private CANTalon master;
 	private CANTalon[] slaves;
-	MotionProfiler profiler;
+	private MotionProfiler profiler;
 	
 	/**
 	 * 
@@ -68,7 +68,7 @@ public class MotionProfileCommand extends Command2 {
 	 */
 	public void execute() {
 //		master.set(0.3);
-//		profiler.control();
+		profiler.control();
 		master.changeControlMode(TalonControlMode.MotionProfile); //Make Talon go into motion profiling mode.
 		CANTalon.SetValueMotionProfile setOutput = profiler.getSetValue();
 		master.set(setOutput.value);
