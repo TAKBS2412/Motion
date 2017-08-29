@@ -8,7 +8,6 @@ import com.ctre.CANTalon.TalonControlMode;
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.RobotDrive;
-import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.networktables.NetworkTable;
 
 /**
@@ -88,22 +87,21 @@ public class Robot extends IterativeRobot {
 			talon.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
 		}
 		
-		rd = new RobotDrive(allTalons[0], allTalons[1], allTalons[2], allTalons[3]);
-		
+//		rd = new RobotDrive(allTalons[0], allTalons[1], allTalons[2], allTalons[3]);
 		//Setup Step2 Commands.
-		CANTalon slaves[] = {allTalons[0], allTalons[1], allTalons[3]};
+		CANTalon slaves[] = {allTalons[0], allTalons[1], allTalons[2]};
 		
 		mpc = new MotionProfileCommand(allTalons[2], slaves);
-		ec = new EncoderCommand(allTalons[2], rd, 0.5d, 10, true);
-		dftc = new DriveForTimeCommand(1, rd, 0.5d, 0.0d, 5E9);
+		ec = new EncoderCommand(allTalons[3], slaves, 25, true);
+		dftc = new DriveForTimeCommand(1, allTalons, 0.5d, 0.0d, 5E9);
 		
 		//Setup Step3 Commands.
-		gc = new GyroCommand(new ADXRS450_Gyro(), rd, 0.3d, 30);
-		vc = new VisionCommand(rd);
+		gc = new GyroCommand(new ADXRS450_Gyro(), allTalons, 0.3d, 30);
+		vc = new VisionCommand(allTalons);
 
 		//Setup Step4 Commands.
-		vc2 = new VisionCommand(rd);
-		ec2 = new EncoderCommand(allTalons[2], rd, 0.3d, 7, true);
+		vc2 = new VisionCommand(allTalons);
+		ec2 =new EncoderCommand(allTalons[3], slaves, 7, true);
 		
 		//Setup autonomous stages
 		as2 = new AutonomousStage();
@@ -121,8 +119,8 @@ public class Robot extends IterativeRobot {
 		as4.addDefaultCommand("Vision Processing", vc2);
 		as4.addCommand("Encoders", ec2);
 		as4.sendCommands("Step4");
-		
 //		profiler = new MotionProfiler(allTalons[2]);
+		
 	}
 	
 	@Override
@@ -159,6 +157,7 @@ public class Robot extends IterativeRobot {
 		selectedCommand = stages.get(currentStage).getSelected();
 		selectedCommand.initialize();
 		selectedCommand.start();
+		
 	}
 
 	/**
@@ -167,7 +166,6 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void autonomousPeriodic() {
 		if(currentStage >= stages.size()) return;
-		
 		selectedCommand.execute();
 		
 		if(selectedCommand.isFinished()) {

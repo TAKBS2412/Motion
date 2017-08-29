@@ -1,22 +1,33 @@
 package org.usfirst.frc.team2412.robot;
 
+import com.ctre.CANTalon;
+
 import edu.wpi.first.wpilibj.RobotDrive;
 
 public class VisionCommand extends Command2 {
 	
 	private RobotDrive rd;
+	private CANTalon[] talons;
 	//Variables for detecting whether targets weren't found three times in a row.
 	private boolean targetsFoundLast;
 	private boolean targetsFoundSecondLast;
-	public VisionCommand(RobotDrive _rd) {
-		this.rd = _rd;
+	public VisionCommand(CANTalon[] _talons) {
+		this.talons = _talons;
+	}
+	
+	/**
+	 * Called when the command starts.
+	 */
+	public void start() {
+		rd = new RobotDrive(talons[0], talons[1], talons[2], talons[3]);
 	}
 	
 	/**
 	 * Determines if the command is finished.
 	 */
 	protected boolean isFinished() {
-		return Robot.visionTable.getBoolean("pegclose", false);
+//		return Robot.visionTable.getBoolean("pegclose", false);
+		return Math.random() > 0.7;
 	}
 	
 	/**

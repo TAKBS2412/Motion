@@ -1,17 +1,20 @@
 package org.usfirst.frc.team2412.robot;
 
+import com.ctre.CANTalon;
+
 import edu.wpi.first.wpilibj.RobotDrive;
 
 public class DriveForTimeCommand extends Command2 {
 
 	private RobotDrive rd;
+	private CANTalon[] talons;
 	private double move;
 	private double turn;
 	private double duration;
 	
 	private long startuptime;
-	public DriveForTimeCommand(int _commandStage, RobotDrive _rd, double _move, double _turn, double _duration) {
-		this.rd = _rd;
+	public DriveForTimeCommand(int _commandStage, CANTalon[] _talons, double _move, double _turn, double _duration) {
+		this.talons = _talons;
 		this.move = _move;
 		this.turn = _turn;
 		this.duration = _duration;
@@ -22,6 +25,13 @@ public class DriveForTimeCommand extends Command2 {
 	 */
 	public void initialize() {
 		this.startuptime = System.nanoTime();
+	}
+	
+	/**
+	 * Called when the command starts.
+	 */
+	public void start() {
+		rd = new RobotDrive(talons[0], talons[1], talons[2], talons[3]);
 	}
 	
 	/**
