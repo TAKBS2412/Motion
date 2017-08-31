@@ -2,18 +2,16 @@ package org.usfirst.frc.team2412.robot;
 
 import edu.wpi.first.wpilibj.RobotDrive;
 import edu.wpi.first.wpilibj.interfaces.Gyro;
-import com.ctre.CANTalon;
 
 public class GyroCommand extends Command2 {
 
 	private Gyro gyro;
 	private RobotDrive rd;
-	private CANTalon[] talons;
 	private double turnSpeed;
 	private double angleToTurn;
-	public GyroCommand(Gyro _gyro, CANTalon[] _talons, double _angle, double _angleToTurn) {
+	public GyroCommand(Gyro _gyro, RobotDrive _rd, double _angle, double _angleToTurn) {
 		this.gyro = _gyro;
-		this.talons = _talons;
+		this.rd = _rd;
 		this.turnSpeed = _angle;
 		this.angleToTurn = _angleToTurn;
 	}
@@ -23,13 +21,6 @@ public class GyroCommand extends Command2 {
 	 */
 	public void initialize() {
 		gyro.reset();
-	}
-	
-	/**
-	 * Called when the command starts.
-	 */
-	public void start() {
-		rd = new RobotDrive(talons[0], talons[1], talons[2], talons[3]);
 	}
 	
 	/**
