@@ -65,7 +65,7 @@ public class EncoderCommand extends Command2 {
 	 * Determines if the command is finished.
 	 */
 	protected boolean isFinished() {
-		return Math.abs(targetPositionRotations - talon.getPosition()) < 0.01;
+		return talon.getClosedLoopError() < 0.01;
 	}
 	
 	/**
