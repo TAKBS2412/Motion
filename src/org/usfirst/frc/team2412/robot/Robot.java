@@ -91,10 +91,10 @@ public class Robot extends IterativeRobot {
 		rd = new RobotDrive(allTalons[0], allTalons[1], allTalons[2], allTalons[3]);
 		
 		//Setup Step2 Commands.
-		CANTalon slaves[] = {allTalons[0], allTalons[1], allTalons[3]};
+		CANTalon slaves[] = {allTalons[0], allTalons[1], allTalons[2]};
 		
 		mpc = new MotionProfileCommand(allTalons[2], slaves);
-		ec = new EncoderCommand(allTalons[2], rd, 0.5d, 10, true);
+		ec = new EncoderCommand(allTalons[3], slaves, rd, 10, false);
 		dftc = new DriveForTimeCommand(1, rd, 0.5d, 0.0d, 5E9);
 		
 		//Setup Step3 Commands.
@@ -103,7 +103,7 @@ public class Robot extends IterativeRobot {
 
 		//Setup Step4 Commands.
 		vc2 = new VisionCommand(rd);
-		ec2 = new EncoderCommand(allTalons[2], rd, 0.3d, 7, true);
+		ec2 = new EncoderCommand(allTalons[3], slaves, rd, 7, false);
 		
 		//Setup autonomous stages
 		as2 = new AutonomousStage();
