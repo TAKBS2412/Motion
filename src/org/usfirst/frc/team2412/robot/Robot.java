@@ -90,10 +90,13 @@ public class Robot extends IterativeRobot {
 		
 		rd = new RobotDrive(allTalons[0], allTalons[1], allTalons[2], allTalons[3]);
 		
+		for(CANTalon talon : allTalons) {
+			talon.enable();
+		}
 		//Setup Step2 Commands.
 		CANTalon slaves[] = {allTalons[0], allTalons[1], allTalons[2]};
 		
-		mpc = new MotionProfileCommand(allTalons[2], slaves);
+		mpc = new MotionProfileCommand(allTalons[3], slaves);
 		ec = new EncoderCommand(allTalons[3], slaves, rd, 10, false);
 		dftc = new DriveForTimeCommand(1, rd, 0.5d, 0.0d, 5E9);
 		

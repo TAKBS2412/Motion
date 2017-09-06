@@ -21,35 +21,22 @@ public class MotionProfileCommand extends Command2 {
 		slaves = new CANTalon[_slaves.length];
 		for(int i = 0; i < _slaves.length; i++) {
 			slaves[i] = _slaves[i];
-			System.out.println("Slave #" + i + ": " +  slaves[i].getControlMode());
 		}
 		
 		profiler = new MotionProfiler(master);
 	}
 	
-	/**
-	 * Called when the command first starts.
-	 */
-	public void initialize() {
-		setupMotionProfiling();
-		
-		master.setPosition(0); //Zero out the encoder in the beginning
-		master.configEncoderCodesPerRev(2048);
-		master.setF(0.2600);
-		master.setP(0);
-		master.setI(0);
-		master.setD(0);
-		
-		System.out.println("init");
-	}
 	
 	/**
 	 * Called when the Command starts.
 	 */
 	public void start() {
 		super.start();
-		profiler.startMotionProfile();
 		
+		setupMotionProfiling();
+		for(int i = 0; i < slaves.length; i++) {
+			System.out.println("Slave #" + i + ": " +  slaves[i].getControlMode());
+		}
 		System.out.println("start");
 	}
 	
@@ -69,6 +56,11 @@ public class MotionProfileCommand extends Command2 {
 	public void execute() {
 //		master.set(0.3);
 		profiler.control();
+		//Make all talons follow master
+		for(CANTalon talon : slaves) {
+			talon.changeControlMode(CANTalon.TalonControlMode.Follower);
+			talon.set(master.getDeviceID());
+		}
 		master.changeControlMode(TalonControlMode.MotionProfile); //Make Talon go into motion profiling mode.
 		CANTalon.SetValueMotionProfile setOutput = profiler.getSetValue();
 		master.set(setOutput.value);
@@ -77,13 +69,15 @@ public class MotionProfileCommand extends Command2 {
 	private void setupMotionProfiling() {
 		master.reverseOutput(true); //Reverse the motor output.
 		master.setFeedbackDevice(CANTalon.FeedbackDevice.QuadEncoder);
-//		master.changeControlMode(TalonControlMode.MotionProfile); //Make Talon go into motion profiling mode.
 		
-		//Make all talons follow master
-		for(CANTalon talon : slaves) {
-			talon.changeControlMode(CANTalon.TalonControlMode.Follower);
-			talon.set(master.getDeviceID());
-		}
+		master.setPosition(0); //Zero out the encoder in the beginning
+		master.configEncoderCodesPerRev(2048);
+		master.setF(0.2600);
+		master.setP(0);
+		master.setI(0);
+		master.setD(0);
+		
+		profiler.startMotionProfile();
 	}
 	
 	/**
