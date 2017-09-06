@@ -46,8 +46,8 @@ public class EncoderCommand extends Command2 {
 		talon.enable();
 		
 		int absolutePosition = talon.getPulseWidthPosition() & 0xFFF; /* mask out the bottom12 bits, we don't care about the wrap arounds */
-        /* use the low level API to set the quad encoder signal */
-        talon.setEncPosition(absolutePosition);
+		/* use the low level API to set the quad encoder signal */
+        talon.setPosition(absolutePosition);
         
         /* choose the sensor and sensor direction */
         talon.setFeedbackDevice(FeedbackDevice.QuadEncoder);
