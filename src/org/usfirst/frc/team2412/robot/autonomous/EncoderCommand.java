@@ -67,6 +67,7 @@ public class EncoderCommand extends Command2 {
 	 */
 	public void execute() {
 		rd.drive(0.5, 0.0);
+		talon.getPosition();
 	}
 	
 	/**
