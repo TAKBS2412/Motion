@@ -21,7 +21,6 @@ public class EncoderCommand extends Command2 {
 		slaves = new CANTalon[_slaves.length];
 		for(int i = 0; i < _slaves.length; i++) {
 			slaves[i] = _slaves[i];
-			System.out.println("Slave #" + i + ": " +  slaves[i].getControlMode());
 		}
 		this.targetPositionRotations = _targetPositionRotations;
 		this.reverseSensor = _reverseSensor;
@@ -32,10 +31,6 @@ public class EncoderCommand extends Command2 {
 	 * Called when the command first starts.
 	 */
 	public void start() {
-//		for(CANTalon slave : _slaves) {
-//			slave.changeControlMode(CANTalon.TalonControlMode.Follower);
-//			slave.set(_talon.getDeviceID());
-//		}
 
 		//Make sure all of the Talons are in PercentVbus mode.
 		for(CANTalon talon : slaves) {
@@ -71,8 +66,6 @@ public class EncoderCommand extends Command2 {
 	 * Called periodically when the command is running.
 	 */
 	public void execute() {
-		System.out.println(talon.getPosition());
-		System.out.println("Driving...");
 		rd.drive(0.5, 0.0);
 	}
 	
@@ -80,7 +73,6 @@ public class EncoderCommand extends Command2 {
 	 * Called when the command ends.
 	 */
 	public void end() {
-		System.out.println("Stopped");
 		rd.drive(0.0, 0.0);
 	}
 	

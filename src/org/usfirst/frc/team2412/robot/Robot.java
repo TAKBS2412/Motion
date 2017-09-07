@@ -3,7 +3,6 @@ package org.usfirst.frc.team2412.robot;
 import java.util.ArrayList;
 
 import com.ctre.CANTalon;
-import com.ctre.CANTalon.TalonControlMode;
 
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.IterativeRobot;
@@ -159,13 +158,11 @@ public class Robot extends IterativeRobot {
 		selectedCommand.execute();
 		
 		if(selectedCommand.isFinished()) {
-			System.out.println("Finished");
 			//Current command is finished, move on to the next one.
 			currentStage++;
 			selectedCommand.end();
 			if(currentStage < stages.size()) {
 				selectedCommand = stages.get(currentStage).getSelected();
-				System.out.println(selectedCommand);
 				selectedCommand.initialize();
 				selectedCommand.start();
 			}

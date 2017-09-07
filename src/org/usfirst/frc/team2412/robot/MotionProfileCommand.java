@@ -16,7 +16,6 @@ public class MotionProfileCommand extends Command2 {
 	 */
 	public MotionProfileCommand(CANTalon _master, CANTalon[] _slaves) {
 		this.master = _master;
-		System.out.println("Master: " + master.getControlMode());
 		//Copy CANTalon array.
 		slaves = new CANTalon[_slaves.length];
 		for(int i = 0; i < _slaves.length; i++) {
@@ -34,10 +33,6 @@ public class MotionProfileCommand extends Command2 {
 		super.start();
 		
 		setupMotionProfiling();
-		for(int i = 0; i < slaves.length; i++) {
-			System.out.println("Slave #" + i + ": " +  slaves[i].getControlMode());
-		}
-		System.out.println("start");
 	}
 	
 	/**
@@ -45,16 +40,12 @@ public class MotionProfileCommand extends Command2 {
 	 */
 	protected boolean isFinished() {
 		return profiler.getSetValue() == CANTalon.SetValueMotionProfile.Hold;
-//		return profiler.activeIsLast();
 	}
-	
-	//TODO add execute(), look over https://github.com/TAKBS2412/Motion/blob/master/src/org/usfirst/frc/team2412/robot/Robot.java, add anything else that's needed.
 	
 	/**
 	 * Called periodically when the command is running.
 	 */
 	public void execute() {
-//		master.set(0.3);
 		profiler.control();
 		//Make all talons follow master
 		for(CANTalon talon : slaves) {
@@ -84,7 +75,6 @@ public class MotionProfileCommand extends Command2 {
 	 * Called when the command ends.
 	 */
 	public void end() {
-		System.out.println("End");
 		master.reverseOutput(false);
 		master.changeControlMode(TalonControlMode.PercentVbus);
 		master.set(0);
