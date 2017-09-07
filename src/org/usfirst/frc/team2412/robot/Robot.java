@@ -2,6 +2,14 @@ package org.usfirst.frc.team2412.robot;
 
 import java.util.ArrayList;
 
+import org.usfirst.frc.team2412.robot.autonomous.AutonomousStage;
+import org.usfirst.frc.team2412.robot.autonomous.Command2;
+import org.usfirst.frc.team2412.robot.autonomous.DriveForTimeCommand;
+import org.usfirst.frc.team2412.robot.autonomous.EncoderCommand;
+import org.usfirst.frc.team2412.robot.autonomous.GyroCommand;
+import org.usfirst.frc.team2412.robot.autonomous.MotionProfileCommand;
+import org.usfirst.frc.team2412.robot.autonomous.VisionCommand;
+
 import com.ctre.CANTalon;
 
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
