@@ -8,7 +8,6 @@ import com.ctre.CANTalon.TalonControlMode;
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.RobotDrive;
-import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.networktables.NetworkTable;
 
 /**
@@ -25,12 +24,6 @@ public class Robot extends IterativeRobot {
 	private RobotDrive rd;
 	
 	private final double encodertocmconv = 0.0239534386;
-	
-	private MotionProfiler profiler; //The MotionProfile logic.
-	
-	private boolean motionProfileStarted;
-	private boolean motionProfileEnded;
-	private boolean turnStarted;
 	
 	/**Autonomous selecting variables*/
 	
@@ -101,7 +94,7 @@ public class Robot extends IterativeRobot {
 		dftc = new DriveForTimeCommand(1, rd, 0.5d, 0.0d, 5E9);
 		
 		//Setup Step3 Commands.
-		gc = new GyroCommand(new ADXRS450_Gyro(), rd, 0.3d, 30);
+		gc = new GyroCommand(new ADXRS450_Gyro(), rd, 0.3d, 1);
 		vc = new VisionCommand(rd);
 
 		//Setup Step4 Commands.
@@ -124,18 +117,10 @@ public class Robot extends IterativeRobot {
 		as4.addDefaultCommand("Vision Processing", vc2);
 		as4.addCommand("Encoders", ec2);
 		as4.sendCommands("Step4");
-		
-//		profiler = new MotionProfiler(allTalons[2]);
 	}
 	
 	@Override
 	public void teleopInit() {
-//		allTalons[2].setPosition(0); //Zero out the encoder in the beginning
-//		allTalons[2].configEncoderCodesPerRev(2048);
-//		allTalons[2].setF(0.2600);
-//		allTalons[2].setP(0);
-//		allTalons[2].setI(0);
-//		allTalons[2].setD(0);
 	}
 
 	/**
@@ -192,42 +177,6 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void teleopPeriodic() {
-//		System.out.println(motionProfileStarted + ", " + motionProfileEnded + ", " + turnStarted);
-//		if(!motionProfileStarted && !turnStarted) {
-//			motionProfileStarted = true;
-//			allTalons[2].changeControlMode(TalonControlMode.MotionProfile); //Make Talon go into motion profiling mode.
-//			profiler.startMotionProfile();
-//			System.out.println("Hello");
-//		}
-//		if(!motionProfileEnded) {
-//			profiler.control();
-//			allTalons[2].changeControlMode(TalonControlMode.MotionProfile); //Make Talon go into motion profiling mode.
-//			CANTalon.SetValueMotionProfile setOutput = profiler.getSetValue();
-//			allTalons[2].set(setOutput.value);
-//			if(profiler.activeIsLast()) {
-//				System.out.println("isLast: true");
-//			}
-//			motionProfileEnded = profiler.activeIsLast();
-//		}
-//		if(motionProfileEnded && !turnStarted) {
-//			System.out.println("Motion Profile ended, preparing to turn.");
-//			allTalons[2].reverseOutput(false);
-//			allTalons[2].changeControlMode(TalonControlMode.PercentVbus);
-//			allTalons[2].set(0);
-//			profiler.reset();
-//			allTalons[3].changeControlMode(TalonControlMode.PercentVbus);
-//			allTalons[0].changeControlMode(TalonControlMode.PercentVbus);
-//			allTalons[1].changeControlMode(TalonControlMode.PercentVbus);
-//			turnStarted = true;
-//		}
-//		if(turnStarted) {
-////			System.out.println("Turning...");
-////			allTalons[2].set(0.3);
-////			allTalons[3].set(0.3);
-////			allTalons[0].set(-0.3);
-////			allTalons[1].set(-0.3);
-////			rd.arcadeDrive(0.3d, 0.0d);
-//		}
 	}
 
 	/**
@@ -244,23 +193,6 @@ public class Robot extends IterativeRobot {
 //	}
 	@Override
 	public void disabledInit() {
-//		setupMotionProfiling();
-	}
-	
-	private void setupMotionProfiling() {
-		allTalons[2].reverseOutput(true); //Reverse the motor output.
-		allTalons[2].setFeedbackDevice(CANTalon.FeedbackDevice.QuadEncoder);
-		allTalons[2].changeControlMode(TalonControlMode.MotionProfile); //Make Talon go into motion profiling mode.
-		//Make talon2 follow allTalons[2]
-		allTalons[3].changeControlMode(CANTalon.TalonControlMode.Follower);
-		allTalons[3].set(allTalons[2].getDeviceID());
-		
-		//Make left talons follow allTalons[2]
-		allTalons[0].changeControlMode(CANTalon.TalonControlMode.Follower);
-		allTalons[0].set(allTalons[2].getDeviceID());
-		allTalons[1].changeControlMode(CANTalon.TalonControlMode.Follower);
-		allTalons[1].set(allTalons[2].getDeviceID());
-		motionProfileStarted = motionProfileEnded = turnStarted = false;
 	}
 }
 
