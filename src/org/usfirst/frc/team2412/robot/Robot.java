@@ -101,7 +101,7 @@ public class Robot extends IterativeRobot {
 		dftc = new DriveForTimeCommand(1, rd, 0.5d, 0.0d, 5E9);
 		
 		//Setup Step3 Commands.
-		gc = new GyroCommand(new ADXRS450_Gyro(), rd, 0.3d, 1);
+		gc = new GyroCommand(new ADXRS450_Gyro(), rd, 0.3d, 1); //TODO CHANGE THIS!!!
 		vc = new VisionCommand(rd);
 
 		//Setup Step4 Commands.
@@ -152,8 +152,10 @@ public class Robot extends IterativeRobot {
 		currentStage = 0;
 		
 		selectedCommand = stages.get(currentStage).getSelected();
-		selectedCommand.initialize();
-		selectedCommand.start();
+		if(selectedCommand != null) {
+			selectedCommand.initialize();
+			selectedCommand.start();
+		}
 	}
 
 	/**
@@ -163,16 +165,22 @@ public class Robot extends IterativeRobot {
 	public void autonomousPeriodic() {
 		if(currentStage >= stages.size()) return;
 		
-		selectedCommand.execute();
-		
-		if(selectedCommand.isFinished()) {
+		if(selectedCommand != null) {
+			selectedCommand.execute();
+		}
+			
+		if(selectedCommand == null || selectedCommand.isFinished()) {
 			//Current command is finished, move on to the next one.
 			currentStage++;
-			selectedCommand.end();
+			if(selectedCommand != null) {
+				selectedCommand.end();
+			}
 			if(currentStage < stages.size()) {
 				selectedCommand = stages.get(currentStage).getSelected();
-				selectedCommand.initialize();
-				selectedCommand.start();
+				if(selectedCommand != null) {
+					selectedCommand.initialize();
+					selectedCommand.start();
+				}
 			}
 		}
 	}
