@@ -76,13 +76,20 @@ public class Robot extends IterativeRobot {
 	public void robotInit() {
 		pydashboardTable = NetworkTable.getTable("PyDashboard");
 		visionTable = NetworkTable.getTable("datatable");
+
+		allTalons[0] = new CANTalon(1);
+		allTalons[1] = new CANTalon(9);
 		
+		allTalons[2] = new CANTalon(10);
+		allTalons[3] = new CANTalon(5);
+		
+		/*
 		allTalons[0] = new CANTalon(7);
 		allTalons[1] = new CANTalon(6);
 		
 		allTalons[2] = new CANTalon(2);
 		allTalons[3] = new CANTalon(3);
-		
+		*/
 		//Make sure all of the Talons are in PercentVbus mode.
 		for(CANTalon talon : allTalons) {
 			talon.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
@@ -97,16 +104,16 @@ public class Robot extends IterativeRobot {
 		CANTalon slaves[] = {allTalons[0], allTalons[1], allTalons[2]};
 		
 		mpc = new MotionProfileCommand(allTalons[3], slaves);
-		ec = new EncoderCommand(allTalons[3], slaves, rd, 10, false);
-		dftc = new DriveForTimeCommand(1, rd, 0.5d, 0.0d, 5E9);
+		ec = new EncoderCommand(allTalons[3], slaves, rd, 1.8, false);
+//		dftc = new DriveForTimeCommand(1, rd, 0.3d, 0.0d, 0.5E9); //Used to be 2.49E9
 		
 		//Setup Step3 Commands.
-		gc = new GyroCommand(new ADXRS450_Gyro(), rd, 0.3d, 1); //TODO CHANGE THIS!!!
+		gc = new GyroCommand(new ADXRS450_Gyro(), allTalons[3], slaves, 0.2d, 60);
 		vc = new VisionCommand(rd);
 
 		//Setup Step4 Commands.
 		vc2 = new VisionCommand(rd);
-		ec2 = new EncoderCommand(allTalons[3], slaves, rd, 7, false);
+		ec2 = new EncoderCommand(allTalons[3], slaves, rd, 0.975, false);
 		
 		//Setup autonomous stages
 		as2 = new AutonomousStage();
@@ -150,7 +157,7 @@ public class Robot extends IterativeRobot {
 		stages.add(as4);
 		
 		currentStage = 0;
-		
+		System.out.println(currentStage);
 		selectedCommand = stages.get(currentStage).getSelected();
 		if(selectedCommand != null) {
 			selectedCommand.initialize();
@@ -164,7 +171,6 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void autonomousPeriodic() {
 		if(currentStage >= stages.size()) return;
-		
 		if(selectedCommand != null) {
 			selectedCommand.execute();
 		}
@@ -206,6 +212,8 @@ public class Robot extends IterativeRobot {
 //	}
 	@Override
 	public void disabledInit() {
+		if(selectedCommand != null)
+			selectedCommand.end();
 	}
 }
 
