@@ -51,6 +51,9 @@ public class MotionProfileCommand extends Command2 {
 		for(CANTalon talon : slaves) {
 			talon.changeControlMode(CANTalon.TalonControlMode.Follower);
 			talon.set(master.getDeviceID());
+			if(talon.getDeviceID() != 10) {
+				talon.reverseOutput(true);
+			}
 		}
 		master.changeControlMode(TalonControlMode.MotionProfile); //Make Talon go into motion profiling mode.
 		CANTalon.SetValueMotionProfile setOutput = profiler.getSetValue();
