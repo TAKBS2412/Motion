@@ -15,6 +15,8 @@ public class EncoderCommand extends Command2 {
 	private final double targetPositionRotations;
 	StringBuilder _sb = new StringBuilder();
 	int _loops = 0;
+	
+	private double error = 0;
 	public EncoderCommand(CANTalon talon, CANTalon[] _slaves, RobotDrive _rd, double _targetPositionRotations, boolean _reverseSensor) {
 		this.talon = talon;
 		//Copy CANTalon array.
@@ -40,9 +42,10 @@ public class EncoderCommand extends Command2 {
 		talon.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
 		talon.enable();
 		
-		int absolutePosition = talon.getPulseWidthPosition() & 0xFFF; /* mask out the bottom12 bits, we don't care about the wrap arounds */
+//		int absolutePosition = talon.getPulseWidthPosition() & 0xFFF; /* mask out the bottom12 bits, we don't care about the wrap arounds */
 		/* use the low level API to set the quad encoder signal */
-        talon.setPosition(absolutePosition);
+//        talon.setPosition(absolutePosition);
+		talon.setPosition(0);
         
         /* choose the sensor and sensor direction */
         talon.setFeedbackDevice(FeedbackDevice.QuadEncoder);
@@ -59,15 +62,20 @@ public class EncoderCommand extends Command2 {
 	 * Determines if the command is finished.
 	 */
 	public boolean isFinished() {
-		return talon.getPosition() > targetPositionRotations;
+		return error < 0.1;
 	}
 	
 	/**
 	 * Called periodically when the command is running.
 	 */
 	public void execute() {
-		rd.drive(0.5, 0.0);
-		talon.getPosition();
+		error = targetPositionRotations - talon.getPosition();
+		rd.drive(error/targetPositionRotations, 0.0);
+		/*
+		System.out.println("Position: " + talon.getPosition());
+		System.out.println("Target: " + targetPositionRotations);
+		System.out.println("Output: " + error/targetPositionRotations);
+		*/
 	}
 	
 	/**
