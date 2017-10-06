@@ -8,11 +8,13 @@ import org.usfirst.frc.team2412.robot.autonomous.DriveForTimeCommand;
 import org.usfirst.frc.team2412.robot.autonomous.EncoderCommand;
 import org.usfirst.frc.team2412.robot.autonomous.GyroCommand;
 import org.usfirst.frc.team2412.robot.autonomous.MotionProfileCommand;
+import org.usfirst.frc.team2412.robot.autonomous.PlaceGearCommand;
 import org.usfirst.frc.team2412.robot.autonomous.VisionCommand;
 
 import com.ctre.CANTalon;
 
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.RobotDrive;
 import edu.wpi.first.wpilibj.networktables.NetworkTable;
@@ -25,7 +27,14 @@ import edu.wpi.first.wpilibj.networktables.NetworkTable;
  * directory.
  */
 public class Robot extends IterativeRobot {
-
+	public static int SOLENOID_ID_UP_DOWN = 3, SOLENOID_ID_UP_DOWN_REVERSE = 6,
+			SOLENOID_ID_OPEN_CLOSE = 1,
+			SOLENOID_ID_OPEN_CLOSE_REVERSE = 4,
+			SOLENOID_ID_OPEN_CLOSE_R = 2,
+			SOLENOID_ID_OPEN_CLOSE_REVERSE_R = 5;
+	
+	public static DoubleSolenoid upDownGripper, openCloseGripperL, openCloseGripperR;
+	
 	private CANTalon[] allTalons = new CANTalon[4];
 	
 	private RobotDrive rd;
@@ -45,10 +54,14 @@ public class Robot extends IterativeRobot {
 	//Step 3 Commands.
 	private GyroCommand gc;
 	private VisionCommand vc;
+	private DriveForTimeCommand dftc2;
 
 	//Step 4 Commands.
 	private VisionCommand vc2;
 	private EncoderCommand ec2;
+	private DriveForTimeCommand dftc3;
+	
+	private PlaceGearCommand pgc;
 	
 	private AutonomousStage as2;
 	private AutonomousStage as3;
@@ -74,6 +87,10 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void robotInit() {
+		upDownGripper = new DoubleSolenoid(SOLENOID_ID_UP_DOWN, SOLENOID_ID_UP_DOWN_REVERSE);
+		openCloseGripperL = new DoubleSolenoid(SOLENOID_ID_OPEN_CLOSE, SOLENOID_ID_OPEN_CLOSE_REVERSE);
+		openCloseGripperR = new DoubleSolenoid(SOLENOID_ID_OPEN_CLOSE_R, SOLENOID_ID_OPEN_CLOSE_REVERSE_R);		
+		
 		pydashboardTable = NetworkTable.getTable("PyDashboard");
 		visionTable = NetworkTable.getTable("datatable");
 
@@ -105,15 +122,20 @@ public class Robot extends IterativeRobot {
 		
 		mpc = new MotionProfileCommand(allTalons[3], slaves);
 		ec = new EncoderCommand(allTalons[3], slaves, rd, 1.8, false);
-//		dftc = new DriveForTimeCommand(1, rd, 0.3d, 0.0d, 0.5E9); //Used to be 2.49E9
+		dftc = new DriveForTimeCommand(1, rd, 0.3d, 0.0d, 2.4E9);
 		
 		//Setup Step3 Commands.
 		gc = new GyroCommand(new ADXRS450_Gyro(), allTalons[3], slaves, 0.2d, 60);
 		vc = new VisionCommand(rd);
+		dftc2 = new DriveForTimeCommand(2, rd, 0.0d, 0.3d, 0.3E9);
 
 		//Setup Step4 Commands.
 		vc2 = new VisionCommand(rd);
 		ec2 = new EncoderCommand(allTalons[3], slaves, rd, 0.975, false);
+		dftc3 = new DriveForTimeCommand(3, rd, 0.3d, 0.0d, 1.70E9);
+		
+		//End of autonomous commands
+		pgc = new PlaceGearCommand(upDownGripper, openCloseGripperL, openCloseGripperR);
 		
 		//Setup autonomous stages
 		as2 = new AutonomousStage();
@@ -125,11 +147,13 @@ public class Robot extends IterativeRobot {
 		as3 = new AutonomousStage();
 		as3.addDefaultCommand("Gyroscope", gc);
 		as3.addCommand("Vision Processing", vc);
+		as3.addCommand("Time-Based", dftc2);
 		as3.sendCommands("Step3");
 
 		as4 = new AutonomousStage();
 		as4.addDefaultCommand("Vision Processing", vc2);
 		as4.addCommand("Encoders", ec2);
+		as4.addCommand("Time-Based", dftc3);
 		as4.sendCommands("Step4");
 	}
 	
@@ -170,9 +194,10 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void autonomousPeriodic() {
-		if(currentStage >= stages.size()) return;
+		if(currentStage > stages.size()) return;
 		if(selectedCommand != null) {
 			selectedCommand.execute();
+			System.out.println(selectedCommand);
 		}
 			
 		if(selectedCommand == null || selectedCommand.isFinished()) {
@@ -184,6 +209,13 @@ public class Robot extends IterativeRobot {
 			if(currentStage < stages.size()) {
 				selectedCommand = stages.get(currentStage).getSelected();
 				if(selectedCommand != null) {
+					selectedCommand.initialize();
+					selectedCommand.start();
+				}
+			} else if(currentStage == stages.size()) {
+				selectedCommand = pgc;
+				if(selectedCommand != null) {
+					System.out.println("Starting...");
 					selectedCommand.initialize();
 					selectedCommand.start();
 				}
