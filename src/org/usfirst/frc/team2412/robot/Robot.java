@@ -121,7 +121,7 @@ public class Robot extends IterativeRobot {
 		CANTalon slaves[] = {allTalons[0], allTalons[1], allTalons[2]};
 		
 		mpc = new MotionProfileCommand(allTalons[3], slaves);
-		ec = new EncoderCommand(allTalons[3], slaves, rd, 1.8, false);
+		ec = new EncoderCommand(allTalons[3], slaves, rd, 2.3, false);
 		dftc = new DriveForTimeCommand(1, rd, 0.3d, 0.0d, 2.4E9);
 		
 		//Setup Step3 Commands.
