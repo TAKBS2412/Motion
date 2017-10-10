@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.RobotDrive;
+import edu.wpi.first.wpilibj.SpeedController;
 import edu.wpi.first.wpilibj.networktables.NetworkTable;
 
 /**
@@ -113,13 +114,13 @@ public class Robot extends IterativeRobot {
 		}
 		
 		rd = new RobotDrive(allTalons[0], allTalons[1], allTalons[2], allTalons[3]);
-		
+		rd.setSafetyEnabled(false);
 		for(CANTalon talon : allTalons) {
 			talon.enable();
 		}
 		//Setup Step2 Commands.
 		CANTalon slaves[] = {allTalons[0], allTalons[1], allTalons[2]};
-		
+
 		mpc = new MotionProfileCommand(allTalons[3], slaves);
 		ec = new EncoderCommand(allTalons[3], slaves, rd, 2.3, false);
 		dftc = new DriveForTimeCommand(1, rd, 0.3d, 0.0d, 2.4E9);

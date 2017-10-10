@@ -57,9 +57,9 @@ public class GyroCommand extends Command2 {
 			talon.set(master.getDeviceID());
 		}
 		if(Robot.step1.equals("Left Peg")) {
-			direction = -1;
-		} else if(Robot.step1.equals("Right Peg")) {
 			direction = 1;
+		} else if(Robot.step1.equals("Right Peg")) {
+			direction = -1;
 		}
 		this.angleToTurn = direction * Math.abs(angleToTurn);
 		turncontrol.setSetpoint(angleToTurn);
@@ -80,6 +80,11 @@ public class GyroCommand extends Command2 {
 	public void execute() {
 		System.out.println("GyroCommand!");
 		System.out.println("Angle: " + gyro.getAngle());
+		master.enable();
+		for(CANTalon talon : slaves) {
+			talon.enable();
+		}
+		System.out.println("Enabled: " + master.isEnabled());
 		/**
 		times++;
 		error = (angleToTurn - Math.abs(gyro.getAngle()));
